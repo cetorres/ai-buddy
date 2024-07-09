@@ -53,6 +53,7 @@ Example usage:
         echo "Text to summarize..." | ai-buddy -p summarize
         ai-buddy -p summarize "Text to summarize..."
         cat MyEssayText.txt | ai-buddy -p analyze_claims
+        pbpaste | ai-buddy -p summarize
 
 Commands:
         -p, --pattern pattern_name prompt  Specify a pattern and send prompt to model. Requires pattern name and prompt (also receive via pipe).
