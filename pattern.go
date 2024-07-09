@@ -7,41 +7,54 @@ import (
 	"strings"
 )
 
-const patternsDir = "./patterns/"
+const PATTERNS_DIR_ENV = "AI_BUDDY_PATTERNS"
 
-func getPatternList() []string {
+func getPatternsDir() string {
+	if os.Getenv(PATTERNS_DIR_ENV) != "" {
+		dir := os.Getenv(PATTERNS_DIR_ENV)
+		dir = strings.TrimSuffix(dir, "/")
+		if !strings.Contains(dir, "/patterns") {
+			dir = dir + "/patterns"
+		}
+		return dir
+	}
+	return "./patterns" 
+}
+
+func getPatternList() ([]string, error) {
 	var patterns []string
-	err := filepath.Walk(patternsDir, func(path string, info os.FileInfo, err error) error {
+
+	err := filepath.Walk(getPatternsDir(), func(path string, info os.FileInfo, err error) error {
 			if err != nil {
-					printError(err)
 					return err
 			}
 
-			dir := strings.Split(path, "/")[1]
-
-			if info.IsDir() && path != patternsDir && !slices.Contains(patterns, dir) {
+			pathParts := strings.Split(path, "/")
+			dir := pathParts[max(len(pathParts) - 1,1)]
+			if info.IsDir() && path != getPatternsDir() && !slices.Contains(patterns, dir) {
 				patterns = append(patterns, dir)
 			}
 
 			return nil
 	})
+
 	if err != nil {
-		printError(err)
-		return nil
+		return nil, err
 	}
-	return patterns
+
+	return patterns, nil
 }
 
 func getPatternPrompt(pattern string) string {
-	patterns := getPatternList()
-	if !slices.Contains(patterns, pattern) {
+	patterns, _ := getPatternList()
+
+	if patterns == nil || !slices.Contains(patterns, pattern) {
 		return ""
 	}
 
-	content, err := os.ReadFile(patternsDir + "/" + pattern + "/system.md")
+	content, err := os.ReadFile(getPatternsDir() + "/" + pattern + "/system.md")
 
 	if err != nil {
-		printError("Could not obtain pattern text.")
 		return ""
 	}
 

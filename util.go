@@ -31,3 +31,8 @@ func printResponse(resp *genai.GenerateContentResponse) {
 		}
 	}
 }
+
+func isInputFromPipe() bool {
+	fileInfo, _ := os.Stdin.Stat()
+	return fileInfo.Mode() & os.ModeCharDevice == 0
+}
