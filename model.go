@@ -27,6 +27,7 @@ type Model struct {
 }
 
 func (m Model) sendPromptToModel(prompt string) {
+	// Google Gemini
 	if m.provider == MODEL_PROVIDER_GOOGLE {
 		apiKey := os.Getenv(GOOGLE_API_KEY_NAME)
 		ctx := context.Background()
@@ -44,25 +45,29 @@ func (m Model) sendPromptToModel(prompt string) {
 
 		iter := session.SendMessageStream(ctx, genai.Text(prompt))
 		for {
-			res, err := iter.Next()
+			response, err := iter.Next()
+
 			if err == iterator.Done {
 				break
 			}
+
 			if err != nil {
 				printError(err)
 				os.Exit(1)
 			}
-			printGoogleResponse(res)
-		}
 
+			printGoogleResponse(response)
+		}
+	
+	// OpenAI ChatGPT
 	} else if m.provider == MODEL_PROVIDER_OPENAI {
 		apiKey := os.Getenv(OPENAI_API_KEY_NAME)
-		c := openai.NewClient(apiKey)
+		client := openai.NewClient(apiKey)
 		ctx := context.Background()
 
 		req := openai.ChatCompletionRequest{
 			Model: m.name,
-			MaxTokens: 20,
+			MaxTokens: 0,
 			Messages: []openai.ChatCompletionMessage{
 				{
 					Role:    openai.ChatMessageRoleUser,
@@ -71,7 +76,7 @@ func (m Model) sendPromptToModel(prompt string) {
 			},
 			Stream: true,
 		}
-		stream, err := c.CreateChatCompletionStream(ctx, req)
+		stream, err := client.CreateChatCompletionStream(ctx, req)
 		if err != nil {
 			printError(err)
 			os.Exit(1)
@@ -80,7 +85,9 @@ func (m Model) sendPromptToModel(prompt string) {
 
 		for {
 			response, err := stream.Recv()
+
 			if errors.Is(err, io.EOF) {
+				println()
 				return
 			}
 
