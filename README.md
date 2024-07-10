@@ -4,7 +4,7 @@ A terminal command in Go that is an AI tool to help solving problems using a set
 
 It's heavily inspired by [Daniel Miessler](https://github.com/danielmiessler)'s tool [Fabric](https://github.com/danielmiessler/fabric). I created this as a simplified Go version, that's compiled, and probably a bit faster.
 
-It's currently using only Google Gemini API.
+It's currently using Google Gemini API and OpenAI ChatGPT API.
 
 ## Build and usage
 
