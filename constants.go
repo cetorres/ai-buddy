@@ -24,7 +24,7 @@ Commands:
 	-lm, --list-models                     List all available models.
 	-p, --pattern <pattern_name> <prompt>  Specify a pattern and send prompt to model. Requires pattern name and prompt (also receive via pipe).
 	-l, --list                             List all available patterns.
-	-v, --view <pattern_name>                View pattern prompt. Requires pattern name.
+	-v, --view <pattern_name>              View pattern prompt. Requires pattern name.
 	-h, --help                             Show this help.
 
 Google Gemini API:
