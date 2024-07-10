@@ -16,17 +16,40 @@ $ go install
 $ ai-buddy
 ```
 
-## Google Gemini API
+## AI Models APIs
 
-I used the [Google Gemini](https://gemini.google.com/app) API and the model `gemini-1.5-pro` to send the prompts to be processed.
+### Google Gemini API
 
-You will need to obtain your own API key and set an environment variable with it:
+For [Google Gemini](https://gemini.google.com/app) API it's using the following models:
+
+- gemini-1.5-pro
+- gemini-1.5-flash
+- gemini-1.0-pro
+
+You can obtain your own API key and set an environment variable with it:
 
 ```sh
 $ export GEMINI_API_KEY=<your_key_here>
 ```
 
 Get your free API key at <https://aistudio.google.com/app/apikey>.
+
+### OpenAI ChatGPT API
+
+For [OpenAI ChatGPT](https://chat.openai.com/) API it's using the following models:
+
+- gpt-3.5-turbo
+- gpt-4
+- gpt-4o
+- gpt-4-turbo
+
+You can obtain your own API key and set an environment variable with it:
+
+```sh
+$ export OPENAI_API_KEY=<your_key_here>
+```
+
+Get your free API key at <https://platform.openai.com/api-keys>.
 
 ## Patterns
 
@@ -51,18 +74,31 @@ An AI tool to help solving problems using a set of crowdsourced AI prompts.
 Example usage:
         echo "Text to summarize..." | ai-buddy -p summarize
         ai-buddy -p summarize "Text to summarize..."
+        ai-buddy -p summarize -m gemini-1.5-pro "Text to summarize..."
+        ai-buddy -p summarize -m gpt-3.5-turbo "Text to summarize..."
         cat MyEssayText.txt | ai-buddy -p analyze_claims
         pbpaste | ai-buddy -p summarize | pbcopy
+        cat text.txt | ai-buddy -p summarize -m gemini-1.5-pro
 
 Commands:
-        -p, --pattern pattern_name prompt  Specify a pattern and send prompt to model. Requires pattern name and prompt (also receive via pipe).
-        -l, --list                         List all available patterns.
-        -v, --view pattern_name            View pattern prompt. Requires pattern name.
-        -h, --help                         Show this help.
+        -m, --model <name>                     Specify the model name to use.
+        -lm, --list-models                     List all available models.
+        -p, --pattern <pattern_name> <prompt>  Specify a pattern and send prompt to model. Requires pattern name and prompt (also receive via pipe).
+        -l, --list                             List all available patterns.
+        -v, --view <pattern_name>                View pattern prompt. Requires pattern name.
+        -h, --help                             Show this help.
 
-Uses the Google Gemini API:
+Google Gemini API:
         - Get your API key at https://aistudio.google.com/app/apikey
         - Set an environment variable: export GEMINI_API_KEY=<your_key_here>
+
+OpenAI ChatGPT API:
+        - Get your API key at https://platform.openai.com/api-keys
+        - Set an environment variable: export OPENAI_API_KEY=<your_key_here>
+
+Default model to use:
+        - By default, the model "gemini-1.5-pro" from Google or "gpt-3.5-turbo" from OpenAI are used, depending on the API KEY entered.
+        - But you can set a custom default model via an environment variable: export AI_BUDDY_MODEL=<model_name>
 
 Patterns directory:
         - You can use the patterns directory in the same location of the binary (./patterns), this is by default.
