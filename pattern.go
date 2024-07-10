@@ -7,8 +7,6 @@ import (
 	"strings"
 )
 
-const PATTERNS_DIR_ENV = "AI_BUDDY_PATTERNS"
-
 func getPatternsDir() string {
 	if os.Getenv(PATTERNS_DIR_ENV) != "" {
 		dir := os.Getenv(PATTERNS_DIR_ENV)

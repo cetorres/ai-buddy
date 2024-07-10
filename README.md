@@ -12,10 +12,9 @@ To build and run the program, just run:
 
 ```sh
 $ go build
-$ ./ai-buddy
+$ go install
+$ ai-buddy
 ```
-
-You can then move the binary to a directory in the `$PATH`.
 
 ## Google Gemini API
 
@@ -53,7 +52,7 @@ Example usage:
         echo "Text to summarize..." | ai-buddy -p summarize
         ai-buddy -p summarize "Text to summarize..."
         cat MyEssayText.txt | ai-buddy -p analyze_claims
-        pbpaste | ai-buddy -p summarize
+        pbpaste | ai-buddy -p summarize | pbcopy
 
 Commands:
         -p, --pattern pattern_name prompt  Specify a pattern and send prompt to model. Requires pattern name and prompt (also receive via pipe).
