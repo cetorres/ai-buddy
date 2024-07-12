@@ -21,8 +21,7 @@ func HelpCommand() {
 func ListCommand() {
 	patterns, err := getPatternList()
 	if patterns != nil {
-		println(TITLE)
-		println("\nList of available patterns:\n")
+		println("List of available patterns:\n")
 		println(strings.Join(patterns, "\n"))
 		os.Exit(0)
 	} else {
@@ -32,8 +31,8 @@ func ListCommand() {
 }
 
 func ListModelsCommand() {
-	println(TITLE)
-	println("\nGoogle Gemini models:")
+	println("List of available models:\n")
+	println("Google Gemini models:")
 	println(strings.Join(MODEL_NAMES_GOOGLE, "\n"))
 	println("\nOpenAI ChatGPT models:")
 	println(strings.Join(MODEL_NAMES_OPENAI, "\n"))
@@ -43,8 +42,7 @@ func ListModelsCommand() {
 func ViewCommand(pattern string) {
 	patternPrompt := getPatternPrompt(pattern)
 	if patternPrompt != "" {
-		println(TITLE)
-		println("\nPattern: " + pattern + "\n")
+		println("Pattern: " + pattern + "\n")
 		println(patternPrompt)
 		os.Exit(0)
 	} else {
@@ -73,9 +71,6 @@ func PatternCommand(modelName string, pattern string, text string) {
 	if modelName == "" {
 		modelName = getDefaultModel()
 	}
-
-	println(TITLE)
-	println()
 
 	model := Model{provider, modelName}
 	model.sendPromptToModel(patternPrompt + text)

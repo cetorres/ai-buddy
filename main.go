@@ -32,7 +32,7 @@ func main() {
 	if len(os.Args) >= 3 && (os.Args[1] == "-v" || os.Args[1] == "--view") && os.Args[2] != "" {
 		ViewCommand(os.Args[2])
 	} else if len(os.Args) == 2 && (os.Args[1] == "-v" || os.Args[1] == "--view") {
-		HelpCommand()
+		PrintError("A pattern was not specified.")
 		os.Exit(1)
 	}
 
@@ -52,13 +52,13 @@ func main() {
 			PatternCommand(os.Args[4], os.Args[2], pipeString)
 			os.Exit(0)
 		} else if len(os.Args) == 4 && (os.Args[1] == "-p" || os.Args[1] == "--pattern") && os.Args[2] != "" && (os.Args[3] == "-m" || os.Args[3] == "--model") && pipeString != "" {
-			PrintError("A model was not selected.")
+			PrintError("A model was not specified.")
 			os.Exit(1)
 		} else if len(os.Args) == 3 && (os.Args[1] == "-p" || os.Args[1] == "--pattern") && os.Args[2] != "" && pipeString != "" {
 			PatternCommand("", os.Args[2], pipeString)
 			os.Exit(0)
 		} else if len(os.Args) == 2 && (os.Args[1] == "-p" || os.Args[1] == "--pattern") {
-			PrintError("A pattern was not selected.")
+			PrintError("A pattern was not specified.")
 			os.Exit(1)
 		}
 	} else {
@@ -76,7 +76,7 @@ func main() {
 			PrintError("A prompt was not entered.")
 			os.Exit(1)
 		} else if len(os.Args) == 2 && (os.Args[1] == "-p" || os.Args[1] == "--pattern") {
-			PrintError("A pattern was not selected.")
+			PrintError("A pattern was not specified.")
 			os.Exit(1)
 		}
 	}

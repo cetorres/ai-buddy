@@ -68,7 +68,8 @@ The current list of patterns was copied from the [Fabric](https://github.com/dan
 ## Output
 
 ```
-AI Buddy 1.0 - Copyright © 2024 Carlos E. Torres (https://github.com/cetorres)
+ai-buddy 1.0 - Created by Carlos E. Torres (https://github.com/cetorres)
+
 An AI tool to help solving problems using a set of crowdsourced AI prompts.
 
 Example usage:

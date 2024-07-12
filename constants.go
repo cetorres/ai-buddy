@@ -2,12 +2,14 @@ package main
 
 import "fmt"
 
+const APP_VERSION = "1.0"
 const GOOGLE_API_KEY_NAME = "GEMINI_API_KEY"
 const OPENAI_API_KEY_NAME = "OPENAI_API_KEY"
 const PATTERNS_DIR_ENV = "AI_BUDDY_PATTERNS"
 const DEFAULT_MODEL_ENV = "AI_BUDDY_MODEL"
-const TITLE = "AI Buddy 1.0 - Copyright © 2024 Carlos E. Torres (https://github.com/cetorres)"
+var TITLE = fmt.Sprintf("ai-buddy %s - Created by Carlos E. Torres (https://github.com/cetorres)", APP_VERSION)
 var DESCRIPTION = fmt.Sprintf(`%s
+
 An AI tool to help solving problems using a set of crowdsourced AI prompts.
 
 Example usage:
