@@ -3,28 +3,31 @@ package main
 import (
 	"fmt"
 	"os"
-
-	"github.com/fatih/color"
 )
 
-func printError(err any) {
-	color.Red(fmt.Sprintf("ERROR: %s", err))
+// Text colors
+type Color string
+const (
+	COLOR_RED Color = "\033[0;31m"
+	COLOR_GREEN Color = "\033[32m"
+	COLOR_YELLOW Color = "\033[33m"
+	COLOR_BLUE Color = "\033[34m"
+	COLOR_MAGENTA Color = "\033[35m" 
+	COLOR_CYAN Color = "\033[36m" 
+	COLOR_GRAY Color = "\033[37m" 
+	COLOR_WHITE Color = "\033[97m"
+	COLOR_RESET Color = "\033[0m"
+)
+
+func PrintColor(color Color, text any) {
+	fmt.Fprintf(os.Stdout, "%s%s%s\n", color, text, COLOR_RESET)
 }
 
-func printHelp() {
-	fmt.Println(DESCRIPTION)
-	if os.Getenv(GOOGLE_API_KEY_NAME) == "" {
-		color.Red("\nERROR: " + GOOGLE_API_KEY_NAME + " is missing.")
-		os.Exit(1)
-	}
-	if os.Getenv(OPENAI_API_KEY_NAME) == "" {
-		color.Red("\nERROR: " + OPENAI_API_KEY_NAME + " is missing.")
-		os.Exit(1)
-	}
-	os.Exit(0)
+func PrintError(err any) {
+	PrintColor(COLOR_RED, fmt.Sprintf("ERROR: %s", err))
 }
 
-func isInputFromPipe() bool {
+func IsInputFromPipe() bool {
 	fileInfo, _ := os.Stdin.Stat()
 	return fileInfo.Mode() & os.ModeCharDevice == 0
 }

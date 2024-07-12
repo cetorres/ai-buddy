@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"slices"
 
 	"github.com/google/generative-ai-go/genai"
 	"github.com/sashabaranov/go-openai"
@@ -34,7 +35,7 @@ func (m Model) sendPromptToModel(prompt string) {
 		client, err := genai.NewClient(ctx, option.WithAPIKey(apiKey))
 
 		if err != nil {
-			printError(err)
+			PrintError(err)
 			os.Exit(1)
 		}
 		
@@ -52,7 +53,7 @@ func (m Model) sendPromptToModel(prompt string) {
 			}
 
 			if err != nil {
-				printError(err)
+				PrintError(err)
 				os.Exit(1)
 			}
 
@@ -78,7 +79,7 @@ func (m Model) sendPromptToModel(prompt string) {
 		}
 		stream, err := client.CreateChatCompletionStream(ctx, req)
 		if err != nil {
-			printError(err)
+			PrintError(err)
 			os.Exit(1)
 		}
 		defer stream.Close()
@@ -92,7 +93,7 @@ func (m Model) sendPromptToModel(prompt string) {
 			}
 
 			if err != nil {
-				printError(err)
+				PrintError(err)
 				os.Exit(1)
 			}
 
@@ -113,6 +114,13 @@ func getDefaultModel() string {
 		model = MODEL_NAMES_OPENAI[0]
 	}
 	return model 
+}
+
+func modelNameExists(modelName string) bool {
+	if !slices.Contains(MODEL_NAMES_GOOGLE, modelName) && !slices.Contains(MODEL_NAMES_OPENAI, modelName) {
+		return false
+	}
+	return true
 }
 
 func printGoogleResponse(resp *genai.GenerateContentResponse) {
