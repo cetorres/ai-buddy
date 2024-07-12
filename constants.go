@@ -20,7 +20,7 @@ Example usage:
 	cat text.txt | ai-buddy -p summarize -m gemini-1.5-pro
 
 Commands:
-  -p, --pattern <pattern_name> <prompt>  Specify a pattern and send prompt to model. Requires pattern name and prompt (also receive via pipe).
+	-p, --pattern <pattern_name> <prompt>  Specify a pattern and send prompt to model. Requires pattern name and prompt (also receive via pipe).
 	-m, --model <name>                     Specify the model name to use.
 	-l, --list                             List all available patterns.
 	-v, --view <pattern_name>              View pattern prompt. Requires pattern name.
