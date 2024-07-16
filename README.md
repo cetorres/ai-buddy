@@ -1,10 +1,10 @@
 # ai-buddy
 
-A terminal command in Go that is an AI tool to help solving problems using a set of crowdsourced AI prompts.
+A terminal command in Go that is an AI tool to help solving problems using prompt engineering from a set of crowdsourced AI prompts.
 
 It's heavily inspired by [Daniel Miessler](https://github.com/danielmiessler)'s tool [Fabric](https://github.com/danielmiessler/fabric). I created this as a simplified Go version, that's compiled, and probably a bit faster.
 
-It's currently using Google Gemini API and OpenAI ChatGPT API.
+It currently supports Google Gemini API, OpenAI ChatGPT API, and local Ollama server.
 
 ## Build and usage
 
@@ -51,6 +51,16 @@ $ export OPENAI_API_KEY=<your_key_here>
 
 Get your free API key at <https://platform.openai.com/api-keys>.
 
+### Ollama
+
+To use [Ollama](https://ollama.com), please download the Ollama app, install it and download an AI model. Follow the instructions on the website.
+
+It runs locally on your machine and can use free and open source models like `llama3` or `gemma2`. A list of all available models can be accessed [here](https://ollama.com/library).
+
+For more information about Ollama, please visit its [GitHub repository](https://github.com/ollama/ollama).
+
+Once you followed all the steps to have Ollama properly installed, keep it running on your machine to be able to use it with `ai-buddy`.
+
 ## Patterns
 
 Patterns are crowdsourced curated special prompts that improve the quality of the model's response for a given request.
@@ -70,7 +80,7 @@ The current list of patterns was copied from the [Fabric](https://github.com/dan
 ```
 ai-buddy 1.0 - Created by Carlos E. Torres (https://github.com/cetorres)
 
-An AI tool to help solving problems using a set of crowdsourced AI prompts.
+AI tool to help solving problems using prompt engineering from a set of crowdsourced AI prompts.
 
 Example usage:
         echo "Text to summarize..." | ai-buddy -p summarize
@@ -80,10 +90,12 @@ Example usage:
         cat MyEssayText.txt | ai-buddy -p analyze_claims
         pbpaste | ai-buddy -p summarize | pbcopy
         cat text.txt | ai-buddy -p summarize -m gemini-1.5-pro
+        ai-buddy -p summarize -o -m llama3 "Text to summarize..."
 
 Commands:
         -p, --pattern <pattern_name> <prompt>  Specify a pattern and send prompt to model. Requires pattern name and prompt (also receive via pipe).
-        -m, --model <name>                     Specify the model name to use.
+        -o, --ollama                           Use Ollama local server. You should specify the model name available on your local Ollama server.
+        -m, --model <model_name>               Specify the model name to use.
         -l, --list                             List all available patterns.
         -v, --view <pattern_name>              View pattern prompt. Requires pattern name.
         -lm, --list-models                     List all available models.
@@ -100,6 +112,11 @@ OpenAI ChatGPT API:
 Default model to use:
         - By default, the model "gemini-1.5-pro" from Google or "gpt-3.5-turbo" from OpenAI are used, depending on the API KEY entered.
         - But you can set a custom default model via an environment variable: export AI_BUDDY_MODEL=<model_name>
+
+Ollama:
+        - To use Ollama (https://ollama.com), please download the Ollama app, install it and download an AI model.
+        - It runs locally on your machine and can use free and open source models like llama3 or gemma2.
+        - A list of all available models can be accessed at https://ollama.com/library.
 
 Patterns directory:
         - You can use the patterns directory in the same location of the binary (./patterns), this is by default.

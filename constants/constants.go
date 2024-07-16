@@ -1,4 +1,4 @@
-package main
+package constants
 
 import "fmt"
 
@@ -10,7 +10,7 @@ const DEFAULT_MODEL_ENV = "AI_BUDDY_MODEL"
 var TITLE = fmt.Sprintf("ai-buddy %s - Created by Carlos E. Torres (https://github.com/cetorres)", APP_VERSION)
 var DESCRIPTION = fmt.Sprintf(`%s
 
-An AI tool to help solving problems using a set of crowdsourced AI prompts.
+AI tool to help solving problems using prompt engineering from a set of crowdsourced AI prompts.
 
 Example usage:
 	echo "Text to summarize..." | ai-buddy -p summarize
@@ -20,10 +20,12 @@ Example usage:
 	cat MyEssayText.txt | ai-buddy -p analyze_claims
 	pbpaste | ai-buddy -p summarize | pbcopy
 	cat text.txt | ai-buddy -p summarize -m gemini-1.5-pro
+	ai-buddy -p summarize -o -m llama3 "Text to summarize..."
 
 Commands:
 	-p, --pattern <pattern_name> <prompt>  Specify a pattern and send prompt to model. Requires pattern name and prompt (also receive via pipe).
-	-m, --model <name>                     Specify the model name to use.
+	-o, --ollama                           Use Ollama local server. You should specify the model name available on your local Ollama server.
+	-m, --model <model_name>               Specify the model name to use.
 	-l, --list                             List all available patterns.
 	-v, --view <pattern_name>              View pattern prompt. Requires pattern name.
 	-lm, --list-models                     List all available models.
@@ -40,6 +42,11 @@ OpenAI ChatGPT API:
 Default model to use:
 	- By default, the model "gemini-1.5-pro" from Google or "gpt-3.5-turbo" from OpenAI are used, depending on the API KEY entered.
 	- But you can set a custom default model via an environment variable: export %s=<model_name>
+
+Ollama:
+	- To use Ollama (https://ollama.com), please download the Ollama app, install it and download an AI model.
+	- It runs locally on your machine and can use free and open source models like llama3 or gemma2.
+	- A list of all available models can be accessed at https://ollama.com/library.
 
 Patterns directory:
 	- You can use the patterns directory in the same location of the binary (./patterns), this is by default.

@@ -1,4 +1,4 @@
-package main
+package util
 
 import (
 	"fmt"
@@ -25,6 +25,10 @@ func PrintColor(color Color, text any) {
 
 func PrintError(err any) {
 	PrintColor(COLOR_RED, fmt.Sprintf("ERROR: %s", err))
+}
+
+func PrintWarning(err any) {
+	PrintColor(COLOR_YELLOW, fmt.Sprintf("WARNING: %s", err))
 }
 
 func IsInputFromPipe() bool {
