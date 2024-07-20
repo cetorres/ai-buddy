@@ -111,12 +111,13 @@ OpenAI ChatGPT API:
 
 Default model to use:
         - By default, the model "gemini-1.5-pro" from Google or "gpt-3.5-turbo" from OpenAI are used, depending on the API KEY entered.
-        - But you can set a custom default model via an environment variable: export AI_BUDDY_MODEL=<model_name>
+        - You can set a custom default model via an environment variable: export AI_BUDDY_MODEL=<model_name>
 
 Ollama:
         - To use Ollama (https://ollama.com), please download the Ollama app, install it and download an AI model.
         - It runs locally on your machine and can use free and open source models like llama3 or gemma2.
         - A list of all available models can be accessed at https://ollama.com/library.
+        - You can set a custom Ollama URL via an environment variable: export OLLAMA_URL=<ollama_url>
 
 Patterns directory:
         - You can use the patterns directory in the same location of the binary (./patterns), this is by default.
