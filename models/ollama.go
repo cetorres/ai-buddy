@@ -9,6 +9,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/cetorres/ai-buddy/constants"
 	"github.com/cetorres/ai-buddy/util"
 )
 
@@ -28,6 +29,12 @@ const (
 	OLLAMA_GENERATE_API = "/api/generate"
 )
 
+func GetOllamaUrl() string {
+	if os.Getenv(constants.OLLAMA_URL_ENV) != "" {
+		return os.Getenv(constants.OLLAMA_URL_ENV)
+	}
+	return OLLAMA_LOCAL_URL 
+}
 
 func CreateOllamaGenerateStream(modelName string, prompt string) {
 	values := map[string]string{"model": modelName, "prompt": prompt}
@@ -37,10 +44,10 @@ func CreateOllamaGenerateStream(modelName string, prompt string) {
 		os.Exit(1)
 	}
 
-	response, err := http.Post(OLLAMA_LOCAL_URL + OLLAMA_GENERATE_API, "application/json", bytes.NewBuffer(json_data))
+	response, err := http.Post(GetOllamaUrl() + OLLAMA_GENERATE_API, "application/json", bytes.NewBuffer(json_data))
 	if err != nil {
 		if strings.Contains(err.Error(), "connection refused") {
-			util.PrintError("Could not find the Ollama server running on " + OLLAMA_LOCAL_URL + ".")
+			util.PrintError("Could not find the Ollama server running on " + GetOllamaUrl() + ".")
 		} else {
 			util.PrintError(err)
 		}

@@ -7,6 +7,7 @@ const GOOGLE_API_KEY_NAME = "GEMINI_API_KEY"
 const OPENAI_API_KEY_NAME = "OPENAI_API_KEY"
 const PATTERNS_DIR_ENV = "AI_BUDDY_PATTERNS"
 const DEFAULT_MODEL_ENV = "AI_BUDDY_MODEL"
+const OLLAMA_URL_ENV = "OLLAMA_URL"
 var TITLE = fmt.Sprintf("ai-buddy %s - Created by Carlos E. Torres (https://github.com/cetorres)", APP_VERSION)
 var DESCRIPTION = fmt.Sprintf(`%s
 
@@ -41,14 +42,15 @@ OpenAI ChatGPT API:
 
 Default model to use:
 	- By default, the model "gemini-1.5-pro" from Google or "gpt-3.5-turbo" from OpenAI are used, depending on the API KEY entered.
-	- But you can set a custom default model via an environment variable: export %s=<model_name>
+	- You can set a custom default model via an environment variable: export %s=<model_name>
 
 Ollama:
 	- To use Ollama (https://ollama.com), please download the Ollama app, install it and download an AI model.
 	- It runs locally on your machine and can use free and open source models like llama3 or gemma2.
 	- A list of all available models can be accessed at https://ollama.com/library.
+	- You can set a custom Ollama URL via an environment variable: export %s=<ollama_url>
 
 Patterns directory:
 	- You can use the patterns directory in the same location of the binary (./patterns), this is by default.
 	- Or you can set an environment variable if you want to move the binary to another directory.
-	- Set the environment variable: export %s=<your_dir>/patterns`, TITLE, GOOGLE_API_KEY_NAME, OPENAI_API_KEY_NAME, DEFAULT_MODEL_ENV, PATTERNS_DIR_ENV)
+	- Set the environment variable: export %s=<your_dir>/patterns`, TITLE, GOOGLE_API_KEY_NAME, OPENAI_API_KEY_NAME, DEFAULT_MODEL_ENV, OLLAMA_URL_ENV, PATTERNS_DIR_ENV)
