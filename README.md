@@ -61,6 +61,12 @@ For more information about Ollama, please visit its [GitHub repository](https://
 
 Once you followed all the steps to have Ollama properly installed, keep it running on your machine to be able to use it with `ai-buddy`.
 
+You can set a custom Ollama URL via an environment variable:
+
+```sh
+$ export OLLAMA_URL=<ollama_url>
+```
+
 ## Patterns
 
 Patterns are crowdsourced curated special prompts that improve the quality of the model's response for a given request.
@@ -70,7 +76,7 @@ Take a look at the [./patterns](./patterns/) folder and check how they are creat
 You can use the patterns directory in the same location of the binary, this is by default. Or you can set an environment variable if you want to move the binary to another directory. Set the environment variable: 
 
 ```sh
-export AI_BUDDY_PATTERNS=<your_dir>/patterns
+$ export AI_BUDDY_PATTERNS=<your_dir>/patterns
 ```
 
 The current list of patterns was copied from the [Fabric](https://github.com/danielmiessler/fabric) project.
