@@ -70,7 +70,7 @@ Once you followed all the steps to have Ollama properly installed, keep it runni
 You can set a custom Ollama URL via an environment variable:
 
 ```sh
-$ export OLLAMA_URL=<ollama_url>
+$ export OLLAMA_HOST=<ollama_url>
 ```
 
 ## Patterns
@@ -90,7 +90,7 @@ The current list of patterns was copied from the [Fabric](https://github.com/dan
 ## Output
 
 ```
-ai-buddy 1.0 - Created by Carlos E. Torres (https://github.com/cetorres)
+ai-buddy 1.0.1 - Created by Carlos E. Torres (https://github.com/cetorres)
 
 AI tool to help solving problems using prompt engineering from a set of crowdsourced AI prompts.
 
@@ -129,7 +129,7 @@ Ollama:
         - To use Ollama (https://ollama.com), please download the Ollama app, install it and download an AI model.
         - It runs locally on your machine and can use free and open source models like llama3 or gemma2.
         - A list of all available models can be accessed at https://ollama.com/library.
-        - You can set a custom Ollama URL via an environment variable: export OLLAMA_URL=<ollama_url>
+        - You can set a custom Ollama URL via an environment variable: export OLLAMA_HOST=<ollama_url>
 
 Patterns directory:
         - You can use the patterns directory in the same location of the binary (./patterns), this is by default.
