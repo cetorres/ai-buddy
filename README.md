@@ -14,13 +14,15 @@ It currently supports Google Gemini API, OpenAI ChatGPT API, and local Ollama se
 
 ## Build and usage
 
-To build and run the program, just run:
+You can download the source code and build and run the program:
 
 ```sh
 $ go build
 $ go install
 $ ai-buddy
 ```
+
+Or you can just download the latest release binary for your platform from the [Releases page](https://github.com/cetorres/ai-buddy/releases). The compressed release file contains the `compiled binary` for your platform, the `patterns` directory, and the `README.md` file.
 
 ## AI Models APIs
 
