@@ -2,7 +2,7 @@ package constants
 
 import "fmt"
 
-const APP_VERSION = "1.0.1"
+const APP_VERSION = "1.0"
 const GOOGLE_API_KEY_NAME = "GEMINI_API_KEY"
 const OPENAI_API_KEY_NAME = "OPENAI_API_KEY"
 const PATTERNS_DIR_ENV = "AI_BUDDY_PATTERNS"
