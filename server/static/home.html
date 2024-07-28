@@ -1,0 +1,62 @@
+<p class="fs-5">Select the provider, the model, and the pattern to use with your prompt.</p>
+  
+<form hx-post="/execute" hx-target="#result" hx-indicator="#iconHourglass" _="on submit put '' into #result then put '' into #resultMarkdown then toggle @disabled until htmx:afterOnLoad then call markdownPreview()">
+
+  <div class="row mb-3">
+    <div class="col" hx-get="/providers" hx-target="#providerList" hx-trigger="load">
+      <label for="providerList" class="form-label">Provider</label>
+      <select name="provider" class="form-select" id="providerList" hx-get="/models" hx-target="#modelList" required></select>
+    </div>
+    <div class="col">
+      <label for="modelList" class="form-label">Model</label>
+      <select name="model" class="form-select" id="modelList" required>
+        <option value="">Select a provider first</option>
+      </select>
+    </div>
+    <div class="col" hx-get="/patterns" hx-target="#patternList" hx-trigger="load">
+      <label for="patternList" class="form-label">Pattern</label>
+      <select name="pattern" class="form-select" id="patternList" required></select>
+    </div>
+  </div>
+
+  <div id="dataContainer"></div>
+
+  <div class="mb-3">
+    <label for="prompt" class="form-label">Enter your prompt</label>
+    <textarea name="prompt" class="form-control" id="prompt" rows="4" required></textarea>
+  </div>
+
+  <button type="submit" class="btn btn-primary">
+    <svg id="iconHourglass" class="bi htmx-indicator me-2" width="16" height="16"><use xlink:href="#hourglass"/></svg>
+    <span class="title">Submit</span>
+    <span class="loading">Loading</span>
+  </button>
+
+</form>
+
+<hr class="mb-2">
+
+<div class="mb-3 position-relative">
+  <button class="btn btn-link btn-sm position-absolute end-0" onclick="copy()" title="Copy to clipboard"><svg id="iconCopy" class="bi" width="16" height="16"><use xlink:href="#copy"/></svg></button>
+  
+  <ul class="nav nav-tabs">
+    <li class="nav-item">
+      <a class="nav-link disabled" aria-disabled="true">AI result</a>
+    </li>
+    <li class="nav-item" role="presentation">
+      <a class="nav-link active" href="#" id="markdown-tab" data-bs-toggle="tab" data-bs-target="#markdown-tab-pane" role="tab" aria-controls="markdown-tab-pane" aria-selected="true">Markdown</a>
+    </li>
+    <li class="nav-item" role="presentation">
+      <a class="nav-link" aria-current="page" href="#" id="text-tab" data-bs-toggle="tab" data-bs-target="#text-tab-pane" role="tab" aria-controls="text-tab-pane" aria-selected="false">Text</a>
+    </li>
+  </ul>
+
+  <div class="tab-content" id="tabContent">
+    <div class="tab-pane fade show active" id="markdown-tab-pane" role="tabpanel" aria-labelledby="markdown-tab" tabindex="0">
+      <div id="resultMarkdown"></div>
+    </div>
+    <div class="tab-pane fade" id="text-tab-pane" role="tabpanel" aria-labelledby="text-tab" tabindex="0">
+      <textarea class="form-control" id="result" rows="13" readonly></textarea>
+    </div>
+  </div>
+</div>

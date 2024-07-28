@@ -2,12 +2,14 @@ package constants
 
 import "fmt"
 
-const APP_VERSION = "1.0"
+const APP_VERSION = "1.1"
 const GOOGLE_API_KEY_NAME = "GEMINI_API_KEY"
 const OPENAI_API_KEY_NAME = "OPENAI_API_KEY"
 const PATTERNS_DIR_ENV = "AI_BUDDY_PATTERNS"
 const DEFAULT_MODEL_ENV = "AI_BUDDY_MODEL"
 const OLLAMA_HOST_ENV = "OLLAMA_HOST"
+const AI_BUDDY_SERVER_PORT = 8080
+const AI_BUDDY_SERVER_PORT_ENV = "AI_BUDDY_SERVER_PORT"
 var TITLE = fmt.Sprintf("ai-buddy %s - Created by Carlos E. Torres (https://github.com/cetorres)", APP_VERSION)
 var DESCRIPTION = fmt.Sprintf(`%s
 
@@ -22,6 +24,7 @@ Example usage:
 	pbpaste | ai-buddy -p summarize | pbcopy
 	cat text.txt | ai-buddy -p summarize -m gemini-1.5-pro
 	ai-buddy -p summarize -o -m llama3 "Text to summarize..."
+	ai-buddy --webui
 
 Commands:
 	-p, --pattern <pattern_name> <prompt>  Specify a pattern and send prompt to model. Requires pattern name and prompt (also receive via pipe).
@@ -30,6 +33,7 @@ Commands:
 	-l, --list                             List all available patterns.
 	-v, --view <pattern_name>              View pattern prompt. Requires pattern name.
 	-lm, --list-models                     List all available models.
+	-w, --webui                            Start an HTTP server with the web UI of the app.
 	-h, --help                             Show this help.
 
 Google Gemini API:
@@ -53,4 +57,9 @@ Ollama:
 Patterns directory:
 	- You can use the patterns directory in the same location of the binary (./patterns), this is by default.
 	- Or you can set an environment variable if you want to move the binary to another directory.
-	- Set the environment variable: export %s=<your_dir>/patterns`, TITLE, GOOGLE_API_KEY_NAME, OPENAI_API_KEY_NAME, DEFAULT_MODEL_ENV, OLLAMA_HOST_ENV, PATTERNS_DIR_ENV)
+	- Set the environment variable: export %s=<your_dir>/patterns
+	
+Web UI:
+	- You can use the web UI as an alternative to interact with the app.
+	- By default, it starts a local HTTP server on port 8080, but you can change the port.
+	- Set an environment variable: export %s=<port>`, TITLE, GOOGLE_API_KEY_NAME, OPENAI_API_KEY_NAME, DEFAULT_MODEL_ENV, OLLAMA_HOST_ENV, PATTERNS_DIR_ENV, AI_BUDDY_SERVER_PORT_ENV)

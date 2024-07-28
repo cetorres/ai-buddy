@@ -3,6 +3,7 @@ package models
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"os"
 	"strings"
 
@@ -11,11 +12,15 @@ import (
 	"github.com/ollama/ollama/envconfig"
 )
 
-func CreateOllamaGenerateStream(modelName string, prompt string) {
+func CreateOllamaGenerateStream(modelName string, prompt string, w http.ResponseWriter) {
 	client, err := api.ClientFromEnvironment()
 	if err != nil {
-		util.PrintError(err)
-		os.Exit(1)
+		if w != nil {
+			fmt.Fprint(w, err)
+		} else {
+			util.PrintError(err)
+			os.Exit(1)
+		}
 	}
 
 	req := &api.GenerateRequest{
@@ -25,19 +30,59 @@ func CreateOllamaGenerateStream(modelName string, prompt string) {
 
 	ctx := context.Background()
 	respFunc := func(resp api.GenerateResponse) error {
-		fmt.Print(resp.Response)
+		if w != nil {
+			fmt.Fprint(w, resp.Response)
+		} else {
+			fmt.Print(resp.Response)
+		}
 		return nil
 	}
 
 	err = client.Generate(ctx, req, respFunc)
 	if err != nil {
 		if strings.Contains(err.Error(), "connection refused") {
-			util.PrintError("Could not find the Ollama server running on " + envconfig.Host.String() + ".")
+			if w != nil {
+				fmt.Fprint(w, "Could not find the Ollama server running on " + envconfig.Host.String() + ".")
+			} else {
+				util.PrintError("Could not find the Ollama server running on " + envconfig.Host.String() + ".")
+			}
 		} else {
-			util.PrintError(err)
+			if w != nil {
+				fmt.Fprint(w, err)
+			} else {
+				util.PrintError(err)
+			}
 		}
-		os.Exit(1)
+		if w == nil {
+			os.Exit(1)
+		}
+	}
+	if w == nil {
+		fmt.Println()
+	}
+}
+
+func IsOllamaPresent() bool {
+	_, err := GetOllamaModels()
+	return err == nil
+}
+
+func GetOllamaModels() ([]string, error) {
+	client, err := api.ClientFromEnvironment()
+	if err != nil {
+		return nil, err
 	}
 
-	fmt.Println()
+	ctx := context.Background()
+	list, err := client.List(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	models := []string{}
+	for _, m := range list.Models {
+		models = append(models, m.Name)
+	}
+
+	return models, nil
 }
