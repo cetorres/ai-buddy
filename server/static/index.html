@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="auto">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <script src="static/js/htmx.min.js"></script>
+  <script src="static/js/hyperscript.min.js"></script>
+  <link href="static/css/bootstrap.min.css" rel="stylesheet">
+  <link href="static/css/app.css" rel="stylesheet">
+  <title>ai-buddy</title>
+</head>
+<body>
+  <!-- SVG icons -->
+  <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+    <symbol id="arrow-right-circle" viewBox="0 0 16 16">
+      <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z"/>
+    </symbol>
+    <svg id="robot" xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-robot" viewBox="0 0 16 16">
+      <path d="M6 12.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5M3 8.062C3 6.76 4.235 5.765 5.53 5.886a26.6 26.6 0 0 0 4.94 0C11.765 5.765 13 6.76 13 8.062v1.157a.93.93 0 0 1-.765.935c-.845.147-2.34.346-4.235.346s-3.39-.2-4.235-.346A.93.93 0 0 1 3 9.219zm4.542-.827a.25.25 0 0 0-.217.068l-.92.9a25 25 0 0 1-1.871-.183.25.25 0 0 0-.068.495c.55.076 1.232.149 2.02.193a.25.25 0 0 0 .189-.071l.754-.736.847 1.71a.25.25 0 0 0 .404.062l.932-.97a25 25 0 0 0 1.922-.188.25.25 0 0 0-.068-.495c-.538.074-1.207.145-1.98.189a.25.25 0 0 0-.166.076l-.754.785-.842-1.7a.25.25 0 0 0-.182-.135"/>
+      <path d="M8.5 1.866a1 1 0 1 0-1 0V3h-2A4.5 4.5 0 0 0 1 7.5V8a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1v1a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-1a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1v-.5A4.5 4.5 0 0 0 10.5 3h-2zM14 7.5V13a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V7.5A3.5 3.5 0 0 1 5.5 4h5A3.5 3.5 0 0 1 14 7.5"/>
+    </svg>
+    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-moon" viewBox="0 0 16 16">
+      <path d="M6 .278a.77.77 0 0 1 .08.858 7.2 7.2 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277q.792-.001 1.533-.16a.79.79 0 0 1 .81.316.73.73 0 0 1-.031.893A8.35 8.35 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.75.75 0 0 1 6 .278M4.858 1.311A7.27 7.27 0 0 0 1.025 7.71c0 4.02 3.279 7.276 7.319 7.276a7.32 7.32 0 0 0 5.205-2.162q-.506.063-1.029.063c-4.61 0-8.343-3.714-8.343-8.29 0-1.167.242-2.278.681-3.286"/>
+    </svg>
+    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-sun" viewBox="0 0 16 16">
+      <path d="M8 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6m0 1a4 4 0 1 0 0-8 4 4 0 0 0 0 8M8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0m0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13m8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5M3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8m10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0m-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0m9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707M4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708"/>
+    </svg>
+    <svg id="hourglass" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-hourglass-split" viewBox="0 0 16 16">
+      <path d="M2.5 15a.5.5 0 1 1 0-1h1v-1a4.5 4.5 0 0 1 2.557-4.06c.29-.139.443-.377.443-.59v-.7c0-.213-.154-.451-.443-.59A4.5 4.5 0 0 1 3.5 3V2h-1a.5.5 0 0 1 0-1h11a.5.5 0 0 1 0 1h-1v1a4.5 4.5 0 0 1-2.557 4.06c-.29.139-.443.377-.443.59v.7c0 .213.154.451.443.59A4.5 4.5 0 0 1 12.5 13v1h1a.5.5 0 0 1 0 1zm2-13v1c0 .537.12 1.045.337 1.5h6.326c.216-.455.337-.963.337-1.5V2zm3 6.35c0 .701-.478 1.236-1.011 1.492A3.5 3.5 0 0 0 4.5 13s.866-1.299 3-1.48zm1 0v3.17c2.134.181 3 1.48 3 1.48a3.5 3.5 0 0 0-1.989-3.158C8.978 9.586 8.5 9.052 8.5 8.351z"/>
+    </svg>
+    <svg id="copy" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-copy" viewBox="0 0 16 16">
+      <path fill-rule="evenodd" d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z"/>
+    </svg>
+  </svg>
+
+  <div class="container p-4 py-md-3">
+    <header class="d-flex align-items-center justify-content-between pb-3 mb-2 border-bottom">
+      <a href="/" class="d-flex align-items-center text-body-emphasis text-decoration-none">
+        <svg class="bi me-2" width="32" height="32"><use xlink:href="#robot"/></svg>
+        <span class="fs-4">AI Buddy</span>
+      </a>
+      <button title="Theme switcher" id="modeButton" class="btn btn-sm btn-default pt-2">
+        <svg id="iconMoon" class="bi" width="16" height="16"><use xlink:href="#moon"/></svg>
+        <svg id="iconSun" class="bi" width="16" height="16"><use xlink:href="#sun"/></svg>
+      </button>
+    </header>
+  
+    <main>
+      <p>Select the provider, the model, and the pattern to use with your prompt.</p>
+  
+      <form hx-post="/execute" hx-target="#result" hx-indicator="#iconHourglass" _="on submit put '' into #result then toggle @disabled until htmx:afterOnLoad then call markdownPreview()">
+
+        <div class="row mb-3">
+          <div class="col" hx-get="/providers" hx-target="#providerList" hx-trigger="load">
+            <label for="providerList" class="form-label">Provider</label>
+            <select name="provider" class="form-select" id="providerList" hx-get="/models" hx-target="#modelList" required></select>
+          </div>
+          <div class="col">
+            <label for="modelList" class="form-label">Model</label>
+            <select name="model" class="form-select" id="modelList" required>
+              <option value="">Select a provider first</option>
+            </select>
+          </div>
+          <div class="col" hx-get="/patterns" hx-target="#patternList" hx-trigger="load">
+            <label for="patternList" class="form-label">Pattern</label>
+            <select name="pattern" class="form-select" id="patternList" required></select>
+          </div>
+        </div>
+
+        <div id="dataContainer"></div>
+    
+        <div class="mb-3">
+          <label for="prompt" class="form-label">Enter your prompt</label>
+          <textarea name="prompt" class="form-control" id="prompt" rows="4" required></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+          <svg id="iconHourglass" class="bi htmx-indicator me-2" width="16" height="16"><use xlink:href="#hourglass"/></svg>
+          <span class="title">Submit</span>
+          <span class="loading">Loading</span>
+        </button>
+      
+      </form>
+
+      <hr class="mb-2">
+
+      <div class="mb-3 position-relative">
+        <button class="btn btn-link btn-sm position-absolute end-0" onclick="copy()" title="Copy to clipboard"><svg id="iconCopy" class="bi" width="16" height="16"><use xlink:href="#copy"/></svg></button>
+       
+        <ul class="nav nav-tabs">
+          <li class="nav-item">
+            <a class="nav-link disabled" aria-disabled="true">AI result</a>
+          </li>
+          <li class="nav-item" role="presentation">
+            <a class="nav-link active" href="#" id="markdown-tab" data-bs-toggle="tab" data-bs-target="#markdown-tab-pane" role="tab" aria-controls="markdown-tab-pane" aria-selected="true">Markdown</a>
+          </li>
+          <li class="nav-item" role="presentation">
+            <a class="nav-link" aria-current="page" href="#" id="text-tab" data-bs-toggle="tab" data-bs-target="#text-tab-pane" role="tab" aria-controls="text-tab-pane" aria-selected="false">Text</a>
+          </li>
+        </ul>
+
+        <div class="tab-content" id="tabContent">
+          <div class="tab-pane fade show active" id="markdown-tab-pane" role="tabpanel" aria-labelledby="markdown-tab" tabindex="0">
+            <div id="resultMarkdown"></div>
+          </div>
+          <div class="tab-pane fade" id="text-tab-pane" role="tabpanel" aria-labelledby="text-tab" tabindex="0">
+            <textarea class="form-control" id="result" rows="13" readonly></textarea>
+          </div>
+        </div>
+      </div>
+
+    </main>
+    <footer class="pt-2 my-2 text-body-secondary border-top">
+      <small><a href="https://github.com/cetorres/ai-buddy">ai-buddy</a> &middot; AI tool to help solving problems using prompt engineering from a set of crowdsourced AI prompts &middot; Created by <a href="https://github.com/cetorres">Carlos E. Torres</a></small>
+    </footer>
+  </div>
+
+  <script src="static/js/bootstrap.bundle.min.js"></script>
+  <script src="static/js/marked.min.js"></script>
+  <script src="static/js/app.js"></script>
+</body>
+</html>

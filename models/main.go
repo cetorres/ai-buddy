@@ -1,24 +1,25 @@
 package models
 
 import (
+	"net/http"
 	"os"
 	"slices"
 
 	"github.com/cetorres/ai-buddy/constants"
 )
 
-func (m Model) SendPromptToModel(prompt string) {
+func (m Model) SendPromptToModel(prompt string, w http.ResponseWriter) {
 	// Google Gemini
 	if m.Provider == MODEL_PROVIDER_GOOGLE {
-		CreateGoogleMessageStream(m.Name, prompt)
+		CreateGoogleMessageStream(m.Name, prompt, w)
 
 	// OpenAI ChatGPT
 	} else if m.Provider == MODEL_PROVIDER_OPENAI {
-		CreateOpenAIChatStream(m.Name, prompt)
+		CreateOpenAIChatStream(m.Name, prompt, w)
 
 	// Ollama local server
 	} else if m.Provider == MODEL_PROVIDER_OLLAMA {
-		CreateOllamaGenerateStream(m.Name, prompt)
+		CreateOllamaGenerateStream(m.Name, prompt, w)
 	}
 }
 

@@ -23,6 +23,12 @@ func main() {
 		os.Exit(0)
 	}
 
+	// Check for webui command
+	if len(os.Args) == 2 && (os.Args[1] == "-w" || os.Args[1] == "--webui") {
+		commands.ServeCommand()
+		os.Exit(0)
+	}
+
 	// Check for list argument
 	if len(os.Args) >= 2 && (os.Args[1] == "-l" || os.Args[1] == "--list") {
 		commands.ListCommand()

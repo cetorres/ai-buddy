@@ -7,6 +7,7 @@ import (
 	"github.com/cetorres/ai-buddy/constants"
 	"github.com/cetorres/ai-buddy/models"
 	"github.com/cetorres/ai-buddy/pattern"
+	"github.com/cetorres/ai-buddy/server"
 	"github.com/cetorres/ai-buddy/util"
 )
 
@@ -92,5 +93,9 @@ func PatternCommand(modelName string, patternName string, text string, provider 
 	}
 
 	model := models.Model{Provider: provider, Name: modelName}
-	model.SendPromptToModel(patternPrompt + text)
+	model.SendPromptToModel(patternPrompt + text, nil)
+}
+
+func ServeCommand() {
+	server.CreateHTTPServer()
 }
