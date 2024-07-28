@@ -37,10 +37,19 @@ func ListCommand() {
 
 func ListModelsCommand() {
 	println("List of available models:\n")
+	
 	println("Google Gemini models:")
 	println(strings.Join(models.MODEL_NAMES_GOOGLE, "\n"))
+	
 	println("\nOpenAI ChatGPT models:")
 	println(strings.Join(models.MODEL_NAMES_OPENAI, "\n"))
+
+	ollamaModels, err := models.GetOllamaModels()
+	if err == nil {
+		println("\nOllama models:")
+		println(strings.Join(ollamaModels, "\n"))
+	}
+
 	os.Exit(0)
 }
 
@@ -63,7 +72,7 @@ func PatternCommand(modelName string, patternName string, text string, provider 
 		os.Exit(1)
 	}
 
-	if provider == 0 {
+	if provider == models.MODEL_PROVIDER_UNKNOWN {
 		provider = models.MODEL_PROVIDER_GOOGLE
 	}
 	

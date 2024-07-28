@@ -2,7 +2,7 @@ package constants
 
 import "fmt"
 
-const APP_VERSION = "1.0"
+const APP_VERSION = "1.1"
 const GOOGLE_API_KEY_NAME = "GEMINI_API_KEY"
 const OPENAI_API_KEY_NAME = "OPENAI_API_KEY"
 const PATTERNS_DIR_ENV = "AI_BUDDY_PATTERNS"
@@ -33,7 +33,7 @@ Commands:
 	-l, --list                             List all available patterns.
 	-v, --view <pattern_name>              View pattern prompt. Requires pattern name.
 	-lm, --list-models                     List all available models.
-	-w, --webui                            Start a HTTP server with the web UI of the app.
+	-w, --webui                            Start an HTTP server with the web UI of the app.
 	-h, --help                             Show this help.
 
 Google Gemini API:

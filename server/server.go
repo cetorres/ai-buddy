@@ -2,12 +2,14 @@ package server
 
 import (
 	"embed"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"strconv"
 	"strings"
+	"text/template"
 
 	"github.com/cetorres/ai-buddy/constants"
 	"github.com/cetorres/ai-buddy/models"
@@ -15,15 +17,26 @@ import (
 	"github.com/cetorres/ai-buddy/util"
 )
 
+const DEBUG = false
+
 //go:embed static/*
 var	staticDir embed.FS
 
+type Page struct {
+	Title string
+	Body string
+}
+
 func CreateHTTPServer() {
 	// Routes
-	http.HandleFunc("/", handleIndex)
+	http.HandleFunc("/", handleHomePage)
+	http.HandleFunc("/settings", handleSettingsPage)
+	http.HandleFunc("/settings_values", handleSettingsValue)
+	http.HandleFunc("POST /save_settings", handleSaveSettings)
 	http.HandleFunc("/providers", handleGetProviders)
 	http.HandleFunc("/models", handleGetModels)
 	http.HandleFunc("/patterns", handleGetPatterns)
+	http.HandleFunc("/version", handleGetVersion)
 	http.HandleFunc("POST /execute", handleExecute)
 	http.Handle("/static/", http.FileServer(http.FS(staticDir)))
 
@@ -45,35 +58,65 @@ func CreateHTTPServer() {
 	}
 }
 
-func handleIndex(w http.ResponseWriter, r *http.Request) {
+// Handle pages
+
+func handleHomePage(w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Path
-	log.Printf("GET %s accessed", path)
+	printLog(fmt.Sprintf("GET %s accessed", path))
 
 	if path == "/" {
-		path = "static/index.html"
+		path = "static/home.html"
 	}
 
-	data, err := staticDir.ReadFile(path)
+	loadPage(w, path)
+}
+
+func handleSettingsPage(w http.ResponseWriter, r *http.Request) {
+	path := "static/settings.html"
+	loadPage(w, path)
+}
+
+func loadPage(w http.ResponseWriter, path string) {
+	pageData, err := staticDir.ReadFile(path)
 	if err != nil {
 			http.Error(w, fmt.Sprintf("Page not found: %s", path), http.StatusNotFound)
 			return
 	}
+	page := Page{Title: "", Body: string(pageData)}
+
+	t, err := template.ParseFS(staticDir, "static/template.html")
+	if err != nil {
+		util.PrintError(err)
+		http.Error(w, "Template not found.", http.StatusNotFound)
+		return
+}
 	w.WriteHeader(http.StatusOK)
-	w.Write(data)
+  t.Execute(w, page)
 }
 
+// Hangle API requests
+
 func handleGetProviders(w http.ResponseWriter, r *http.Request) {
-	log.Printf("GET /providers accessed")
-	providers := models.MODEL_PROVIDERS
+	printLog("GET /providers accessed")
+
 	providersHtml := `<option value="">Select a provider</option>`
-	for i, p := range providers {
-		providersHtml += fmt.Sprintf(`<option value="%d">%s</option>`, i+1, p)
+
+	// Detect active providers
+	if models.IsGooglePresent() {
+		providersHtml += fmt.Sprintf(`<option value="%d">%s</option>`, models.MODEL_PROVIDER_GOOGLE, models.MODEL_PROVIDERS_NAMES[models.MODEL_PROVIDER_GOOGLE])
 	}
+	if models.IsOpenAIPresent() {
+		providersHtml += fmt.Sprintf(`<option value="%d">%s</option>`, models.MODEL_PROVIDER_OPENAI, models.MODEL_PROVIDERS_NAMES[models.MODEL_PROVIDER_OPENAI])
+	}
+	if models.IsOllamaPresent() {
+		providersHtml += fmt.Sprintf(`<option value="%d">%s</option>`, models.MODEL_PROVIDER_OLLAMA, models.MODEL_PROVIDERS_NAMES[models.MODEL_PROVIDER_OLLAMA])
+	}
+
 	fmt.Fprint(w, providersHtml)
 }
 
 func handleGetModels(w http.ResponseWriter, r *http.Request) {
-	log.Printf("GET /models accessed")
+	printLog("GET /models accessed")
 
 	providerStr := r.URL.Query().Get("provider")
 	provider, err := strconv.Atoi(providerStr)
@@ -89,7 +132,10 @@ func handleGetModels(w http.ResponseWriter, r *http.Request) {
 	} else if (provider == models.MODEL_PROVIDER_OPENAI) {
 		modelsList = models.MODEL_NAMES_OPENAI
 	} else if (provider == models.MODEL_PROVIDER_OLLAMA) {
-		modelsList = []string{"llama3.1"}
+		ollamaModels, err := models.GetOllamaModels()
+		if err == nil {
+			modelsList = ollamaModels
+		}
 	}
 
 	modelsHtml := `<option value="">Select a model</option>`
@@ -100,8 +146,9 @@ func handleGetModels(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleGetPatterns(w http.ResponseWriter, r *http.Request) {
-	log.Printf("GET /patterns accessed")
+	printLog("GET /patterns accessed")
 	patternsHtml := `<option value="">Select a pattern</option>`
+	patternsHtml += `<option value="no_pattern">NO PATTERN</option>`
 	patterns, err := pattern.GetPatternList()
 	if err == nil {
 		for _, p := range patterns {
@@ -114,10 +161,41 @@ func handleGetPatterns(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func handleExecute(w http.ResponseWriter, r *http.Request) {
-	log.Printf("POST /execute accessed")
+func handleSettingsValue(w http.ResponseWriter, r *http.Request) {
+	printLog("GET /settings_values accessed")
 
-	// provider=ollama&model=llama3.1&pattern=create_ideas&prompt=Meu%20prompt%20aqui
+	settings := models.GetSettings()
+	w.Header().Set("Content-Type", "application/json");
+	json.NewEncoder(w).Encode(settings)
+}
+
+func handleSaveSettings(w http.ResponseWriter, r *http.Request) {
+	printLog("POST /save_settings accessed")
+
+	r.ParseForm()
+
+	googleApiKey := r.Form.Get("google_api_key")
+	openaiApiKey := r.Form.Get("openai_api_key")
+
+	settings := map[string]string{
+		"googleApiKey": googleApiKey,
+		"openaiApiKey": openaiApiKey,
+	}
+
+	res := models.SaveSettings(settings)
+	if res {
+		fmt.Fprint(w, "Settings saved.")
+	} else {
+		fmt.Fprint(w, "Could not save settings.")
+	}
+}
+
+func handleGetVersion(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, constants.APP_VERSION)
+}
+
+func handleExecute(w http.ResponseWriter, r *http.Request) {
+	printLog("POST /execute accessed")
 
 	r.ParseForm()
 
@@ -142,10 +220,15 @@ func handleExecute(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Pattern is required", http.StatusBadRequest)
 		return
 	}
-	patternPrompt := pattern.GetPatternPrompt(patternName)
-	if patternPrompt == "" {
-		http.Error(w, "Pattern '"+ patternName + "' not found.", http.StatusNotFound)
-		return
+	patternPrompt := ""
+	if patternName == "no_pattern" {
+		patternPrompt = ""
+	} else {
+		patternPrompt = pattern.GetPatternPrompt(patternName)
+		if patternPrompt == "" {
+			http.Error(w, "Pattern '"+ patternName + "' not found.", http.StatusNotFound)
+			return
+		}
 	}
 
 	// Prompt
@@ -157,4 +240,10 @@ func handleExecute(w http.ResponseWriter, r *http.Request) {
 
 	model := models.Model{Provider: provider, Name: modelName}
 	model.SendPromptToModel(patternPrompt + prompt, w)
+}
+
+func printLog(text string) {
+	if DEBUG {
+		log.Print(text)
+	}
 }

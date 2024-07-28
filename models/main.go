@@ -43,3 +43,24 @@ func ModelNameExists(modelName string) bool {
 	}
 	return true
 }
+
+func GetSettings() map[string]string {
+	settings := map[string]string{
+		"googleApiKey": os.Getenv(constants.GOOGLE_API_KEY_NAME),
+		"openaiApiKey": os.Getenv(constants.OPENAI_API_KEY_NAME),
+	}
+	return settings
+}
+
+func SaveSettings(settings map[string]string) bool {
+	err1 := os.Setenv(constants.GOOGLE_API_KEY_NAME, settings["googleApiKey"])
+	if err1 != nil {
+		return false
+	}
+	err2 := os.Setenv(constants.OPENAI_API_KEY_NAME, settings["openaiApiKey"])
+	if err2 != nil {
+		return false
+	}
+
+	return true
+}

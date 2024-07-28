@@ -60,13 +60,13 @@ func main() {
 		}
 		pipeString := string(stdin)
 		if len(os.Args) == 5 && (os.Args[1] == "-p" || os.Args[1] == "--pattern") && os.Args[2] != "" && (os.Args[3] == "-m" || os.Args[3] == "--model") && os.Args[4] != "" && pipeString != "" {
-			commands.PatternCommand(os.Args[4], os.Args[2], pipeString, 0)
+			commands.PatternCommand(os.Args[4], os.Args[2], pipeString, models.MODEL_PROVIDER_UNKNOWN)
 			os.Exit(0)
 		} else if len(os.Args) == 4 && (os.Args[1] == "-p" || os.Args[1] == "--pattern") && os.Args[2] != "" && (os.Args[3] == "-m" || os.Args[3] == "--model") && pipeString != "" {
 			util.PrintError("A model was not specified.")
 			os.Exit(1)
 		} else if len(os.Args) == 3 && (os.Args[1] == "-p" || os.Args[1] == "--pattern") && os.Args[2] != "" && pipeString != "" {
-			commands.PatternCommand("", os.Args[2], pipeString, 0)
+			commands.PatternCommand("", os.Args[2], pipeString, models.MODEL_PROVIDER_UNKNOWN)
 			os.Exit(0)
 		} else if len(os.Args) == 2 && (os.Args[1] == "-p" || os.Args[1] == "--pattern") {
 			util.PrintError("A pattern was not specified.")
@@ -86,13 +86,13 @@ func main() {
 	} else {
 		// Try read text from argument
 		if len(os.Args) == 6 && (os.Args[1] == "-p" || os.Args[1] == "--pattern") && os.Args[2] != "" && (os.Args[3] == "-m" || os.Args[3] == "--model") && os.Args[4] != "" && os.Args[5] != "" {
-			commands.PatternCommand(os.Args[4], os.Args[2], os.Args[5], 0)
+			commands.PatternCommand(os.Args[4], os.Args[2], os.Args[5], models.MODEL_PROVIDER_UNKNOWN)
 			os.Exit(0)
 		} else if len(os.Args) == 5 && (os.Args[1] == "-p" || os.Args[1] == "--pattern") && os.Args[2] != "" && (os.Args[3] == "-m" || os.Args[3] == "--model") && os.Args[4] != "" {
 			util.PrintError("A prompt was not entered.")
 			os.Exit(1)
 		} else if len(os.Args) == 4 && (os.Args[1] == "-p" || os.Args[1] == "--pattern") && os.Args[2] != "" && os.Args[3] != "" {
-			commands.PatternCommand("", os.Args[2], os.Args[3], 0)
+			commands.PatternCommand("", os.Args[2], os.Args[3], models.MODEL_PROVIDER_UNKNOWN)
 			os.Exit(0)
 		} else if len(os.Args) == 3 && (os.Args[1] == "-p" || os.Args[1] == "--pattern") && os.Args[2] != "" {
 			util.PrintError("A prompt was not entered.")

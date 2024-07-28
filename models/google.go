@@ -64,3 +64,7 @@ func PrintGoogleResponse(resp *genai.GenerateContentResponse, w http.ResponseWri
 		}
 	}
 }
+
+func IsGooglePresent() bool {
+	return os.Getenv(constants.GOOGLE_API_KEY_NAME) != ""
+}

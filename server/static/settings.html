@@ -1,0 +1,51 @@
+<p class="fs-5">Here you can configure the settings of the application.</p>
+
+<form hx-post="/save_settings" hx-target="#settingsResult" _="on submit put '' into #settingsResult then toggle @disabled until htmx:afterOnLoad then call loadSettings()">
+
+  <div class="row">
+    <div class="col">
+      Google Gemini API key
+    </div>
+    <div class="col">
+      <input name="google_api_key" id="googleApiKey" type="text" class="form-control" placeholder="Enter the API key" aria-label="Google Gemini API key">
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      Open AI API key
+    </div>
+    <div class="col">
+      <input type="text" name="openai_api_key" id="openaiApiKey" class="form-control" placeholder="Enter the API key" aria-label="Open AI API key">
+    </div>
+  </div>
+
+  <button class="btn btn-primary" type="submit">Save settings</button>
+  <span id="settingsResult" class="ms-3"></span>
+
+</form>
+
+<script>
+  const googleApiKey = document.getElementById('googleApiKey');
+  const openaiApiKey = document.getElementById('openaiApiKey');
+
+  htmx.onLoad(() => {
+    loadSettings();
+  })
+
+  async function loadSettings() {
+    try {
+      const response = await fetch("/settings_values");
+      if (!response.ok) {
+        throw new Error(`Response status: ${response.status}`);
+      }
+
+      const json = await response.json();
+
+      googleApiKey.value = json.googleApiKey;
+      openaiApiKey.value = json.openaiApiKey;
+    } catch (error) {
+      console.error(error.message);
+    }
+  }
+</script>

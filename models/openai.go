@@ -63,3 +63,7 @@ func CreateOpenAIChatStream(modelName string, prompt string, w http.ResponseWrit
 		
 	}
 }
+
+func IsOpenAIPresent() bool {
+	return os.Getenv(constants.OPENAI_API_KEY_NAME) != ""
+}

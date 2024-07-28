@@ -61,3 +61,28 @@ func CreateOllamaGenerateStream(modelName string, prompt string, w http.Response
 		fmt.Println()
 	}
 }
+
+func IsOllamaPresent() bool {
+	_, err := GetOllamaModels()
+	return err == nil
+}
+
+func GetOllamaModels() ([]string, error) {
+	client, err := api.ClientFromEnvironment()
+	if err != nil {
+		return nil, err
+	}
+
+	ctx := context.Background()
+	list, err := client.List(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	models := []string{}
+	for _, m := range list.Models {
+		models = append(models, m.Name)
+	}
+
+	return models, nil
+}

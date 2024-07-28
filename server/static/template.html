@@ -7,9 +7,9 @@
   <script src="static/js/hyperscript.min.js"></script>
   <link href="static/css/bootstrap.min.css" rel="stylesheet">
   <link href="static/css/app.css" rel="stylesheet">
-  <title>ai-buddy</title>
+  <title>ai-buddy - {{.Title}}</title>
 </head>
-<body>
+<body hx-get="/version" hx-trigger="load" hx-target="#version">
   <!-- SVG icons -->
   <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
     <symbol id="arrow-right-circle" viewBox="0 0 16 16">
@@ -31,6 +31,13 @@
     <svg id="copy" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-copy" viewBox="0 0 16 16">
       <path fill-rule="evenodd" d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z"/>
     </svg>
+    <svg id="gear" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear" viewBox="0 0 16 16">
+      <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492M5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0"/>
+      <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115z"/>
+    </svg>
+    <svg id="home" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house-door" viewBox="0 0 16 16">
+      <path d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM2.5 14V7.707l5.5-5.5 5.5 5.5V14H10v-4a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v4z"/>
+    </svg>
   </svg>
 
   <div class="container p-4 py-md-3">
@@ -39,79 +46,26 @@
         <svg class="bi me-2" width="32" height="32"><use xlink:href="#robot"/></svg>
         <span class="fs-4">AI Buddy</span>
       </a>
-      <button title="Theme switcher" id="modeButton" class="btn btn-sm btn-default pt-2">
-        <svg id="iconMoon" class="bi" width="16" height="16"><use xlink:href="#moon"/></svg>
-        <svg id="iconSun" class="bi" width="16" height="16"><use xlink:href="#sun"/></svg>
-      </button>
+      <div class="pt-2">
+        <a title="Home" href="/" id="homeButton" class="btn btn-sm btn-default">
+          <svg id="iconHome" class="bi" width="16" height="16"><use xlink:href="#home"/></svg>
+        </a>
+        <a title="Settings" href="/settings" id="settingsButton" class="btn btn-sm btn-default">
+          <svg id="iconGear" class="bi" width="16" height="16"><use xlink:href="#gear"/></svg>
+        </a>
+        <button title="Theme switcher" id="modeButton" class="btn btn-sm btn-default">
+          <svg id="iconMoon" class="bi" width="16" height="16"><use xlink:href="#moon"/></svg>
+          <svg id="iconSun" class="bi" width="16" height="16"><use xlink:href="#sun"/></svg>
+        </button>
+      </div>
     </header>
   
     <main>
-      <p>Select the provider, the model, and the pattern to use with your prompt.</p>
-  
-      <form hx-post="/execute" hx-target="#result" hx-indicator="#iconHourglass" _="on submit put '' into #result then toggle @disabled until htmx:afterOnLoad then call markdownPreview()">
-
-        <div class="row mb-3">
-          <div class="col" hx-get="/providers" hx-target="#providerList" hx-trigger="load">
-            <label for="providerList" class="form-label">Provider</label>
-            <select name="provider" class="form-select" id="providerList" hx-get="/models" hx-target="#modelList" required></select>
-          </div>
-          <div class="col">
-            <label for="modelList" class="form-label">Model</label>
-            <select name="model" class="form-select" id="modelList" required>
-              <option value="">Select a provider first</option>
-            </select>
-          </div>
-          <div class="col" hx-get="/patterns" hx-target="#patternList" hx-trigger="load">
-            <label for="patternList" class="form-label">Pattern</label>
-            <select name="pattern" class="form-select" id="patternList" required></select>
-          </div>
-        </div>
-
-        <div id="dataContainer"></div>
-    
-        <div class="mb-3">
-          <label for="prompt" class="form-label">Enter your prompt</label>
-          <textarea name="prompt" class="form-control" id="prompt" rows="4" required></textarea>
-        </div>
-
-        <button type="submit" class="btn btn-primary">
-          <svg id="iconHourglass" class="bi htmx-indicator me-2" width="16" height="16"><use xlink:href="#hourglass"/></svg>
-          <span class="title">Submit</span>
-          <span class="loading">Loading</span>
-        </button>
-      
-      </form>
-
-      <hr class="mb-2">
-
-      <div class="mb-3 position-relative">
-        <button class="btn btn-link btn-sm position-absolute end-0" onclick="copy()" title="Copy to clipboard"><svg id="iconCopy" class="bi" width="16" height="16"><use xlink:href="#copy"/></svg></button>
-       
-        <ul class="nav nav-tabs">
-          <li class="nav-item">
-            <a class="nav-link disabled" aria-disabled="true">AI result</a>
-          </li>
-          <li class="nav-item" role="presentation">
-            <a class="nav-link active" href="#" id="markdown-tab" data-bs-toggle="tab" data-bs-target="#markdown-tab-pane" role="tab" aria-controls="markdown-tab-pane" aria-selected="true">Markdown</a>
-          </li>
-          <li class="nav-item" role="presentation">
-            <a class="nav-link" aria-current="page" href="#" id="text-tab" data-bs-toggle="tab" data-bs-target="#text-tab-pane" role="tab" aria-controls="text-tab-pane" aria-selected="false">Text</a>
-          </li>
-        </ul>
-
-        <div class="tab-content" id="tabContent">
-          <div class="tab-pane fade show active" id="markdown-tab-pane" role="tabpanel" aria-labelledby="markdown-tab" tabindex="0">
-            <div id="resultMarkdown"></div>
-          </div>
-          <div class="tab-pane fade" id="text-tab-pane" role="tabpanel" aria-labelledby="text-tab" tabindex="0">
-            <textarea class="form-control" id="result" rows="13" readonly></textarea>
-          </div>
-        </div>
-      </div>
-
+      {{printf "%s" .Body}}
     </main>
+
     <footer class="pt-2 my-2 text-body-secondary border-top">
-      <small><a href="https://github.com/cetorres/ai-buddy">ai-buddy</a> &middot; AI tool to help solving problems using prompt engineering from a set of crowdsourced AI prompts &middot; Created by <a href="https://github.com/cetorres">Carlos E. Torres</a></small>
+      <small><a href="https://github.com/cetorres/ai-buddy" target="_blank">ai-buddy</a> <span id="version"></span></small>
     </footer>
   </div>
 
