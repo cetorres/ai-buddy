@@ -101,7 +101,7 @@ The current list of patterns was copied from the [Fabric](https://github.com/dan
 ## Output
 
 ```
-ai-buddy 1.1 - Created by Carlos E. Torres (https://github.com/cetorres)
+ai-buddy 1.1.1 - Created by Carlos E. Torres (https://github.com/cetorres)
 
 AI tool to help solving problems using prompt engineering from a set of crowdsourced AI prompts.
 
