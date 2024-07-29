@@ -7,7 +7,7 @@
   <script src="static/js/hyperscript.min.js"></script>
   <link href="static/css/bootstrap.min.css" rel="stylesheet">
   <link href="static/css/app.css" rel="stylesheet">
-  <title>ai-buddy - {{.Title}}</title>
+  <title>ai-buddy{{ if (ne .Title "") }} - {{.Title}}{{end}}</title>
 </head>
 <body hx-get="/version" hx-trigger="load" hx-target="#version">
   <!-- SVG icons -->
@@ -44,7 +44,7 @@
     <header class="d-flex align-items-center justify-content-between pb-3 mb-2 border-bottom">
       <a href="/" class="d-flex align-items-center text-body-emphasis text-decoration-none">
         <svg class="bi me-2" width="32" height="32"><use xlink:href="#robot"/></svg>
-        <span class="fs-4">AI Buddy</span>
+        <span class="fs-4">AI Buddy{{ if (ne .Title "") }} - {{.Title}}{{end}}</span>
       </a>
       <div class="pt-2">
         <a title="Home" href="/" id="homeButton" class="btn btn-sm btn-default">

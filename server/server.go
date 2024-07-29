@@ -46,7 +46,8 @@ func CreateHTTPServer() {
 		var err error
 		port, err = strconv.Atoi(s)
 		if err != nil {
-			log.Fatalf("Error: invalid port: %q - %s", s, err)
+			util.PrintError(fmt.Sprintf("Invalid port: %q", s))
+			os.Exit(1)
 		}
 	}
 
@@ -54,7 +55,8 @@ func CreateHTTPServer() {
 	addr := fmt.Sprintf(":%d", port)
 	fmt.Printf("ai-buddy server running on http://127.0.0.1%s\n", addr)
 	if err := http.ListenAndServe(addr, nil); err != nil {
-		log.Fatalf("Error %s", err)
+		util.PrintError(err)
+		os.Exit(1)
 	}
 }
 
@@ -68,21 +70,21 @@ func handleHomePage(w http.ResponseWriter, r *http.Request) {
 		path = "static/home.html"
 	}
 
-	loadPage(w, path)
+	loadPage(w, "", path)
 }
 
 func handleSettingsPage(w http.ResponseWriter, r *http.Request) {
 	path := "static/settings.html"
-	loadPage(w, path)
+	loadPage(w, "Settings", path)
 }
 
-func loadPage(w http.ResponseWriter, path string) {
+func loadPage(w http.ResponseWriter, title string, path string) {
 	pageData, err := staticDir.ReadFile(path)
 	if err != nil {
 			http.Error(w, fmt.Sprintf("Page not found: %s", path), http.StatusNotFound)
 			return
 	}
-	page := Page{Title: "", Body: string(pageData)}
+	page := Page{Title: title, Body: string(pageData)}
 
 	t, err := template.ParseFS(staticDir, "static/template.html")
 	if err != nil {
@@ -241,6 +243,8 @@ func handleExecute(w http.ResponseWriter, r *http.Request) {
 	model := models.Model{Provider: provider, Name: modelName}
 	model.SendPromptToModel(patternPrompt + prompt, w)
 }
+
+// Util
 
 func printLog(text string) {
 	if DEBUG {
