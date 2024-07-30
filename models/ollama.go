@@ -31,7 +31,8 @@ func CreateOllamaGenerateStream(modelName string, prompt string, w http.Response
 	ctx := context.Background()
 	respFunc := func(resp api.GenerateResponse) error {
 		if w != nil {
-			fmt.Fprint(w, resp.Response)
+			w.Write([]byte(resp.Response))
+			w.(http.Flusher).Flush()			
 		} else {
 			fmt.Print(resp.Response)
 		}
@@ -42,13 +43,15 @@ func CreateOllamaGenerateStream(modelName string, prompt string, w http.Response
 	if err != nil {
 		if strings.Contains(err.Error(), "connection refused") {
 			if w != nil {
-				fmt.Fprint(w, "Could not find the Ollama server running on " + envconfig.Host.String() + ".")
+				w.Write([]byte("Could not find the Ollama server running on " + envconfig.Host.String() + "."))
+				w.(http.Flusher).Flush()
 			} else {
 				util.PrintError("Could not find the Ollama server running on " + envconfig.Host.String() + ".")
 			}
 		} else {
 			if w != nil {
-				fmt.Fprint(w, err)
+				w.Write([]byte(fmt.Sprintf("%s", err)))
+				w.(http.Flusher).Flush()
 			} else {
 				util.PrintError(err)
 			}

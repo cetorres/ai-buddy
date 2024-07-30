@@ -199,46 +199,65 @@ func handleGetVersion(w http.ResponseWriter, r *http.Request) {
 func handleExecute(w http.ResponseWriter, r *http.Request) {
 	printLog("POST /execute accessed")
 
-	r.ParseForm()
+	// Read form fields from JSON body
+	d := json.NewDecoder(r.Body)
+	form := struct {
+    Provider *string `json:"provider"`
+		Model *string `json:"model"`
+		Pattern *string `json:"pattern"`
+		Prompt *string `json:"prompt"`
+	}{}
+	err := d.Decode(&form)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 
 	// Provider
-	providerStr := r.Form.Get("provider")
-	provider, err := strconv.Atoi(providerStr)
+	if form.Provider == nil {
+		http.Error(w, "Provider is required", http.StatusBadRequest)
+		return
+	}
+	provider, err := strconv.Atoi(*form.Provider)
 	if err != nil {
 		http.Error(w, "Provider is required", http.StatusBadRequest)
 		return
 	}
 
 	// Model
-	modelName := r.Form.Get("model")
-	if modelName == "" {
+	if form.Model == nil {
 		http.Error(w, "Model is required", http.StatusBadRequest)
+		return
+	}
+	modelName := *form.Model
+	if form.Pattern == nil {
+		http.Error(w, "Pattern is required", http.StatusBadRequest)
 		return
 	}
 
 	// Pattern
-	patternName := r.Form.Get("pattern")
-	if patternName == "" {
-		http.Error(w, "Pattern is required", http.StatusBadRequest)
-		return
-	}
 	patternPrompt := ""
-	if patternName == "no_pattern" {
+	if *form.Pattern == "no_pattern" {
 		patternPrompt = ""
 	} else {
-		patternPrompt = pattern.GetPatternPrompt(patternName)
+		patternPrompt = pattern.GetPatternPrompt(*form.Pattern)
 		if patternPrompt == "" {
-			http.Error(w, "Pattern '"+ patternName + "' not found.", http.StatusNotFound)
+			http.Error(w, "Pattern '"+ *form.Pattern + "' not found.", http.StatusNotFound)
 			return
 		}
 	}
 
 	// Prompt
-	prompt := r.Form.Get("prompt")
-	if prompt == "" {
+	if form.Prompt == nil {
 		http.Error(w, "Prompt is required", http.StatusBadRequest)
 		return
 	}
+	prompt := *form.Prompt
+
+	// Set up headers for streaming
+	w.Header().Set("Content-Type", "text/event-stream")
+	w.Header().Set("Cache-Control", "no-cache")
+	w.Header().Set("Connection", "keep-alive")
 
 	model := models.Model{Provider: provider, Name: modelName}
 	model.SendPromptToModel(patternPrompt + prompt, w)

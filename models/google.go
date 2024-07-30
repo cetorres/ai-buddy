@@ -40,7 +40,8 @@ func CreateGoogleMessageStream(modelName string, prompt string, w http.ResponseW
 
 		if err != nil {
 			if w != nil {
-				fmt.Fprint(w, err)
+				w.Write([]byte(fmt.Sprintf("%s",err)))
+				w.(http.Flusher).Flush()
 			} else {
 				util.PrintError(err)			
 				os.Exit(1)
@@ -56,7 +57,8 @@ func PrintGoogleResponse(resp *genai.GenerateContentResponse, w http.ResponseWri
 		if cand.Content != nil {
 			for _, part := range cand.Content.Parts {
 				if w != nil {
-					fmt.Fprint(w, part)
+					w.Write([]byte(fmt.Sprintf("%s", part)))
+					w.(http.Flusher).Flush()	
 				} else {
 					fmt.Print(part)
 				}

@@ -48,7 +48,8 @@ func CreateOpenAIChatStream(modelName string, prompt string, w http.ResponseWrit
 
 		if err != nil {
 			if w != nil {
-				fmt.Fprint(w, err)
+				w.Write([]byte(fmt.Sprintf("%s", err)))
+				w.(http.Flusher).Flush()
 			} else {
 				util.PrintError(err)
 				os.Exit(1)
@@ -56,7 +57,8 @@ func CreateOpenAIChatStream(modelName string, prompt string, w http.ResponseWrit
 		}
 
 		if w != nil {
-			fmt.Fprint(w, response.Choices[0].Delta.Content)
+			w.Write([]byte(response.Choices[0].Delta.Content))
+			w.(http.Flusher).Flush()
 		} else {
 			fmt.Printf(response.Choices[0].Delta.Content)
 		}

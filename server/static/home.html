@@ -1,6 +1,6 @@
 <p class="fs-5">Select the provider, the model, and the pattern to use with your prompt.</p>
   
-<form hx-post="/execute" hx-target="#result" hx-indicator="#iconHourglass" _="on submit put '' into #result then put '' into #resultMarkdown then toggle @disabled until htmx:afterOnLoad then call markdownPreview()">
+<form>
 
   <div class="row mb-3">
     <div class="col" hx-get="/providers" hx-target="#providerList" hx-trigger="load">
@@ -19,15 +19,13 @@
     </div>
   </div>
 
-  <div id="dataContainer"></div>
-
   <div class="mb-3">
     <label for="prompt" class="form-label">Enter your prompt</label>
     <textarea name="prompt" class="form-control" id="prompt" rows="4" required></textarea>
   </div>
 
-  <button type="submit" class="btn btn-primary">
-    <svg id="iconHourglass" class="bi htmx-indicator me-2" width="16" height="16"><use xlink:href="#hourglass"/></svg>
+  <button type="submit" id="submitButton" class="btn btn-primary">
+    <svg id="iconHourglass" class="bi me-2" width="16" height="16"><use xlink:href="#hourglass"/></svg>
     <span class="title">Submit</span>
     <span class="loading">Loading</span>
   </button>
@@ -37,7 +35,12 @@
 <hr class="mb-2">
 
 <div class="mb-3 position-relative">
-  <button class="btn btn-link btn-sm position-absolute end-0" onclick="copy()" title="Copy to clipboard"><svg id="iconCopy" class="bi" width="16" height="16"><use xlink:href="#copy"/></svg></button>
+  <div class="d-flex align-items-center position-absolute end-0">
+    <div id="copied" class="d-none"><small>Copied!</small></div>
+    <button class="btn btn-link btn-sm" onclick="copy()" _="on click call copy() add .d-inline to #copied remove .d-none from #copied wait 1.5s add .d-none to #copied remove .d-inline from #copied" title="Copy to clipboard">
+      <svg id="iconCopy" class="bi" width="16" height="16"><use xlink:href="#copy"/></svg>
+    </button>
+  </div>
   
   <ul class="nav nav-tabs">
     <li class="nav-item">
@@ -60,3 +63,68 @@
     </div>
   </div>
 </div>
+
+<script>
+  const form = document.querySelector('form');
+  const result = document.getElementById('result');
+  const resultMarkdown = document.getElementById('resultMarkdown');
+  const submitButton = document.getElementById('submitButton');
+  const iconHourglass = document.getElementById('iconHourglass');
+  const submitTitle = document.querySelector('#submitButton .title');
+  const submitLoading = document.querySelector('#submitButton .loading');
+
+  showLoading(false);
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    result.value = "";
+    resultMarkdown.innerHTML = "";
+
+    const formData = new FormData(form);
+
+    showLoading(true);
+
+    const response = await fetch('/execute', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/event-stream'
+      },
+      body: JSON.stringify({
+        "provider": formData.get("provider"),
+        "model": formData.get("model"),
+        "pattern": formData.get("pattern"),
+        "prompt":  formData.get("prompt")
+      })
+    });
+
+    const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
+
+    while (true) {
+      const {value, done} = await reader.read();
+      if (done) break;
+
+      result.value += value;
+      result.scrollTop = result.scrollHeight;
+      
+      resultMarkdown.innerHTML = marked.parse(result.value);
+      resultMarkdown.scrollTop = resultMarkdown.scrollHeight;
+    }
+
+    showLoading(false);
+  });
+
+  function showLoading(isLoading=false) {
+    if (isLoading) {
+      submitButton.classList.add('disabled');
+      iconHourglass.style.display = 'inline';
+      submitTitle.style.display = 'none';
+      submitLoading.style.display = 'inline';
+    }
+    else {
+      submitButton.classList.remove('disabled');
+      iconHourglass.style.display = 'none';
+      submitTitle.style.display = 'inline';
+      submitLoading.style.display = 'none';
+    }
+  }
+</script>

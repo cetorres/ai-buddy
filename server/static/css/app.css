@@ -13,26 +13,6 @@
   to{ transform: rotate(360deg); }
 }
 
-.htmx-indicator {
-  display: none
-}
-
-.htmx-indicator ~ span.loading {
-  display: none
-}
-
-.htmx-indicator.htmx-request {
-    display: inline;
-}
-
-.htmx-indicator.htmx-request ~ span.title {
-    display: none;
-}
-
-.htmx-indicator.htmx-request ~ span.loading {
-    display: inline;
-}
-
 #result {
   height: 400px
 }

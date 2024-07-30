@@ -58,9 +58,5 @@ func SaveSettings(settings map[string]string) bool {
 		return false
 	}
 	err2 := os.Setenv(constants.OPENAI_API_KEY_NAME, settings["openaiApiKey"])
-	if err2 != nil {
-		return false
-	}
-
-	return true
+	return err2 == nil
 }
