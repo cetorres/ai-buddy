@@ -19,9 +19,14 @@ func CreateGoogleMessageStream(modelName string, prompt string, w http.ResponseW
 	client, err := genai.NewClient(ctx, option.WithAPIKey(apiKey))
 
 	if err != nil {
+		if w != nil {
+			http.Error(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
+		}
 		util.PrintError(err)
 		if w == nil {
 			os.Exit(1)
+		} else {
+			return
 		}
 	}
 	
@@ -40,8 +45,9 @@ func CreateGoogleMessageStream(modelName string, prompt string, w http.ResponseW
 
 		if err != nil {
 			if w != nil {
-				w.Write([]byte(fmt.Sprintf("%s",err)))
-				w.(http.Flusher).Flush()
+				http.Error(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
+				util.PrintError(err)
+				return
 			} else {
 				util.PrintError(err)			
 				os.Exit(1)

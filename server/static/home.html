@@ -24,11 +24,15 @@
     <textarea name="prompt" class="form-control" id="prompt" rows="4" required></textarea>
   </div>
 
-  <button type="submit" id="submitButton" class="btn btn-primary">
-    <svg id="iconHourglass" class="bi me-2" width="16" height="16"><use xlink:href="#hourglass"/></svg>
-    <span class="title">Submit</span>
-    <span class="loading">Loading</span>
-  </button>
+  <div class="d-flex">
+    <button type="submit" id="submitButton" class="btn btn-primary">
+      <svg id="iconHourglass" class="bi me-2" width="16" height="16"><use xlink:href="#hourglass"/></svg>
+      <span class="title">Submit</span>
+      <span class="loading">Loading</span>
+    </button>
+
+    <div id="errorMessage" class="ms-3 text-danger">Error</div>
+  </div>
 
 </form>
 
@@ -72,7 +76,9 @@
   const iconHourglass = document.getElementById('iconHourglass');
   const submitTitle = document.querySelector('#submitButton .title');
   const submitLoading = document.querySelector('#submitButton .loading');
+  const errorMessage = document.getElementById('errorMessage');
 
+  showError('');
   showLoading(false);
 
   form.addEventListener("submit", async (event) => {
@@ -82,32 +88,38 @@
 
     const formData = new FormData(form);
 
+    showError('');
     showLoading(true);
 
-    const response = await fetch('/execute', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'text/event-stream'
-      },
-      body: JSON.stringify({
-        "provider": formData.get("provider"),
-        "model": formData.get("model"),
-        "pattern": formData.get("pattern"),
-        "prompt":  formData.get("prompt")
-      })
-    });
+    try {
+      const response = await fetch('/execute', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'text/event-stream'
+        },
+        body: JSON.stringify({
+          "provider": formData.get("provider"),
+          "model": formData.get("model"),
+          "pattern": formData.get("pattern"),
+          "prompt":  formData.get("prompt")
+        })
+      });
 
-    const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
+      const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
 
-    while (true) {
-      const {value, done} = await reader.read();
-      if (done) break;
+      while (true) {
+        const {value, done} = await reader.read();
+        if (done) break;
 
-      result.value += value;
-      result.scrollTop = result.scrollHeight;
-      
-      resultMarkdown.innerHTML = marked.parse(result.value);
-      resultMarkdown.scrollTop = resultMarkdown.scrollHeight;
+        result.value += value;
+        result.scrollTop = result.scrollHeight;
+        
+        resultMarkdown.innerHTML = marked.parse(result.value);
+        resultMarkdown.scrollTop = resultMarkdown.scrollHeight;
+      }
+    } catch (error) {
+      showError("Error: " + error);
+      console.log("Error: " + error);
     }
 
     showLoading(false);
@@ -126,5 +138,15 @@
       submitTitle.style.display = 'inline';
       submitLoading.style.display = 'none';
     }
+  }
+
+  function showError(error='') {
+    if (error == '') {
+      errorMessage.style.display = 'none';
+    }
+    else {
+      errorMessage.style.display = 'block';
+    }
+    errorMessage.innerHTML = error;
   }
 </script>

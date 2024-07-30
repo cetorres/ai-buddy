@@ -29,4 +29,5 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         goos: ${{ matrix.goos }}
         goarch: ${{ matrix.goarch }}
+        ldflags: "-s -w"
         extra_files: patterns README.md

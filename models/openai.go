@@ -31,8 +31,14 @@ func CreateOpenAIChatStream(modelName string, prompt string, w http.ResponseWrit
 	}
 	stream, err := client.CreateChatCompletionStream(ctx, req)
 	if err != nil {
-		util.PrintError(err)
-		os.Exit(1)
+		if w != nil {
+			http.Error(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
+			util.PrintError(err)
+			return
+		} else {
+			util.PrintError(err)
+			os.Exit(1)
+		}
 	}
 	defer stream.Close()
 
@@ -48,8 +54,9 @@ func CreateOpenAIChatStream(modelName string, prompt string, w http.ResponseWrit
 
 		if err != nil {
 			if w != nil {
-				w.Write([]byte(fmt.Sprintf("%s", err)))
-				w.(http.Flusher).Flush()
+				http.Error(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
+				util.PrintError(err)
+				return
 			} else {
 				util.PrintError(err)
 				os.Exit(1)
