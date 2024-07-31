@@ -176,8 +176,8 @@ func handleSaveSettings(w http.ResponseWriter, r *http.Request) {
 
 	r.ParseForm()
 
-	googleApiKey := r.Form.Get("google_api_key")
-	openaiApiKey := r.Form.Get("openai_api_key")
+	googleApiKey := r.Form.Get("googleApiKey")
+	openaiApiKey := r.Form.Get("openaiApiKey")
 
 	settings := map[string]string{
 		"googleApiKey": googleApiKey,

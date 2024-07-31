@@ -1,13 +1,13 @@
 <p class="fs-5">Here you can configure the settings of the application.</p>
 
-<form hx-post="/save_settings" hx-target="#settingsResult" _="on submit put '' into #settingsResult then toggle @disabled until htmx:afterOnLoad then call loadSettings()">
+<form>
 
   <div class="row">
     <div class="col">
       Google Gemini API key
     </div>
     <div class="col">
-      <input name="google_api_key" id="googleApiKey" type="text" class="form-control" placeholder="Enter the API key" aria-label="Google Gemini API key">
+      <input name="googleApiKey" id="googleApiKey" type="text" class="form-control" placeholder="Enter the API key" aria-label="Google Gemini API key">
     </div>
   </div>
 
@@ -16,7 +16,7 @@
       Open AI API key
     </div>
     <div class="col">
-      <input type="text" name="openai_api_key" id="openaiApiKey" class="form-control" placeholder="Enter the API key" aria-label="Open AI API key">
+      <input type="text" name="openaiApiKey" id="openaiApiKey" class="form-control" placeholder="Enter the API key" aria-label="Open AI API key">
     </div>
   </div>
 
@@ -26,12 +26,36 @@
 </form>
 
 <script>
+  const form = document.querySelector('form');
   const googleApiKey = document.getElementById('googleApiKey');
   const openaiApiKey = document.getElementById('openaiApiKey');
+  const settingsResult = document.getElementById('settingsResult');
 
-  htmx.onLoad(() => {
+  document.addEventListener("DOMContentLoaded", () => {
     loadSettings();
   })
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    settingsResult.innerHTML = "";
+    form.setAttribute('disabled', '');
+
+    try {
+      const response = await fetch('/save_settings', {
+        method: 'POST',
+        body: new URLSearchParams(new FormData(form))
+      });
+
+      const body = await response.text();
+      settingsResult.innerHTML = body;
+
+      loadSettings();
+    } catch (error) {
+      console.log("Error: " + error);
+    }
+
+    form.removeAttribute('disabled');
+  });
 
   async function loadSettings() {
     try {

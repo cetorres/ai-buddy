@@ -30,14 +30,6 @@ function setTheme (toggle = false) {
   }
 }
 
-function markdownPreview() {
-  document.getElementById('resultMarkdown').innerHTML = marked.parse(document.getElementById('result').value);
-}
-
-function copy() {
-  navigator.clipboard.writeText(document.getElementById('result').value);
-}
-
 setTheme();
 document.getElementById('modeButton').addEventListener('click', () => setTheme(true));
 window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => setTheme());

@@ -3,19 +3,19 @@
 <form>
 
   <div class="row mb-3">
-    <div class="col" hx-get="/providers" hx-target="#providerList" hx-trigger="load">
+    <div class="col">
       <label for="providerList" class="form-label">Provider</label>
-      <select name="provider" class="form-select" id="providerList" hx-get="/models" hx-target="#modelList" required></select>
+      <select name="provider" class="form-select" id="providerList" onchange="loadModels(true)" required></select>
     </div>
     <div class="col">
-      <label for="modelList" class="form-label">Model</label>
-      <select name="model" class="form-select" id="modelList" required>
+      <label for="modelsList" class="form-label">Model</label>
+      <select name="model" class="form-select" id="modelsList" onchange="selectModel()" required>
         <option value="">Select a provider first</option>
       </select>
     </div>
-    <div class="col" hx-get="/patterns" hx-target="#patternList" hx-trigger="load">
-      <label for="patternList" class="form-label">Pattern</label>
-      <select name="pattern" class="form-select" id="patternList" required></select>
+    <div class="col">
+      <label for="patternsList" class="form-label">Pattern</label>
+      <select name="pattern" class="form-select" id="patternsList" onchange="selectPattern()" required></select>
     </div>
   </div>
 
@@ -30,7 +30,6 @@
       <span class="title">Submit</span>
       <span class="loading">Loading</span>
     </button>
-
     <div id="errorMessage" class="ms-3 text-danger">Error</div>
   </div>
 
@@ -41,7 +40,7 @@
 <div class="mb-3 position-relative">
   <div class="d-flex align-items-center position-absolute end-0">
     <div id="copied" class="d-none"><small>Copied!</small></div>
-    <button class="btn btn-link btn-sm" onclick="copy()" _="on click call copy() add .d-inline to #copied remove .d-none from #copied wait 1.5s add .d-none to #copied remove .d-inline from #copied" title="Copy to clipboard">
+    <button class="btn btn-link btn-sm" onclick="copyToClipboard()" title="Copy to clipboard">
       <svg id="iconCopy" class="bi" width="16" height="16"><use xlink:href="#copy"/></svg>
     </button>
   </div>
@@ -70,6 +69,9 @@
 
 <script>
   const form = document.querySelector('form');
+  const providerList = document.getElementById('providerList');
+  const modelsList = document.getElementById('modelsList');
+  const patternsList = document.getElementById('patternsList');
   const result = document.getElementById('result');
   const resultMarkdown = document.getElementById('resultMarkdown');
   const submitButton = document.getElementById('submitButton');
@@ -77,9 +79,15 @@
   const submitTitle = document.querySelector('#submitButton .title');
   const submitLoading = document.querySelector('#submitButton .loading');
   const errorMessage = document.getElementById('errorMessage');
+  const copied = document.getElementById('copied');
 
   showError('');
   showLoading(false);
+
+  document.addEventListener("DOMContentLoaded", () => {
+    loadProviders();
+    loadPatterns();
+  });
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -125,6 +133,82 @@
     showLoading(false);
   });
 
+  async function loadProviders() {
+    try {
+      const response = await fetch("/providers");
+      if (!response.ok) {
+        console.log(`Error ${response.status}: ${response.errorMessage}`);
+        return;
+      }
+      const body = await response.text();
+      providerList.innerHTML = body;
+      
+      const savedProvider = localStorage.getItem('provider');
+      if (savedProvider && savedProvider != "") {
+        providerList.value = savedProvider;
+        await loadModels();
+      }
+    } catch (error) {
+      console.log("Error: " + error);
+    }
+  }
+
+  async function loadModels(fromProviderChange=false) {
+    localStorage.setItem('provider', providerList.value);
+
+    try {
+      if (providerList.value == "") {
+        modelsList.innerHTML = `<option value="">Select a provider first</option>`;
+        return;
+      }
+
+      const response = await fetch(`/models?provider=${providerList.value}`);
+      if (!response.ok) {
+        console.log(`Error ${response.status}: ${response.errorMessage}`);
+        modelsList.innerHTML = `<option value="">Select a provider first</option>`;
+        return;
+      }
+      const body = await response.text();
+      modelsList.innerHTML = body;
+
+      if (!fromProviderChange) {
+        const savedModel = localStorage.getItem('model');
+        if (savedModel && savedModel != "") {
+          modelsList.value = savedModel;
+        }
+      }
+    } catch (error) {
+      console.log("Error: " + error);
+    }
+  }
+
+  function selectModel() {
+    localStorage.setItem('model', modelsList.value);
+  }
+
+  function selectPattern() {
+    localStorage.setItem('pattern', patternsList.value);
+  }
+
+  async function loadPatterns() {
+    try {
+      const response = await fetch("/patterns");
+      if (!response.ok) {
+        console.log(`Error ${response.status}: ${response.errorMessage}`);
+        return;
+      }
+      const body = await response.text();
+      patternsList.innerHTML = body;
+
+      const savedPattern = localStorage.getItem('pattern');
+      if (savedPattern && savedPattern != "") {
+        patternsList.value = savedPattern;
+      }
+    } catch (error) {
+      console.log("Error: " + error);
+    }
+  }
+
   function showLoading(isLoading=false) {
     if (isLoading) {
       submitButton.classList.add('disabled');
@@ -148,5 +232,15 @@
       errorMessage.style.display = 'block';
     }
     errorMessage.innerHTML = error;
+  }
+
+  function copyToClipboard() {
+    navigator.clipboard.writeText(result.value);
+    copied.classList.remove('d-none');
+    copied.classList.add('d-inline');
+    setTimeout(() => {
+      copied.classList.remove('d-inline');
+      copied.classList.add('d-none');
+    }, 1500);
   }
 </script>
