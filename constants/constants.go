@@ -7,7 +7,6 @@ const OLLAMA_HOST_ENV = "OLLAMA_HOST"
 const AI_BUDDY_SERVER_PORT = 8080
 var TITLE = fmt.Sprintf("ai-buddy %s - Created by Carlos E. Torres (https://github.com/cetorres)", APP_VERSION)
 var DESCRIPTION = fmt.Sprintf(`%s
-
 AI tool to help solving problems using prompt engineering from a set of crowdsourced AI prompts.
 
 Example usage:
