@@ -2,10 +2,9 @@ package models
 
 import (
 	"net/http"
-	"os"
 	"slices"
 
-	"github.com/cetorres/ai-buddy/constants"
+	"github.com/cetorres/ai-buddy/config"
 )
 
 func (m Model) SendPromptToModel(prompt string, w http.ResponseWriter) {
@@ -23,15 +22,13 @@ func (m Model) SendPromptToModel(prompt string, w http.ResponseWriter) {
 	}
 }
 
-func GetDefaultModel() string {
-	if os.Getenv(constants.DEFAULT_MODEL_ENV) != "" {
-		return os.Getenv(constants.DEFAULT_MODEL_ENV)
-	}
+func GetDefaultModel(provider int) string {
+	conf := config.GetConfig()
 
 	model := ""
-	if os.Getenv(constants.GOOGLE_API_KEY_NAME) != "" {
+	if provider == MODEL_PROVIDER_GOOGLE && conf.GoogleAPIKey != "" {
 		model = MODEL_NAMES_GOOGLE[0]
-	} else if os.Getenv(constants.OPENAI_API_KEY_NAME) != "" {
+	} else if provider == MODEL_PROVIDER_OPENAI && conf.OpenAIAPIKey != "" {
 		model = MODEL_NAMES_OPENAI[0]
 	}
 	return model 
@@ -42,21 +39,4 @@ func ModelNameExists(modelName string) bool {
 		return false
 	}
 	return true
-}
-
-func GetSettings() map[string]string {
-	settings := map[string]string{
-		"googleApiKey": os.Getenv(constants.GOOGLE_API_KEY_NAME),
-		"openaiApiKey": os.Getenv(constants.OPENAI_API_KEY_NAME),
-	}
-	return settings
-}
-
-func SaveSettings(settings map[string]string) bool {
-	err1 := os.Setenv(constants.GOOGLE_API_KEY_NAME, settings["googleApiKey"])
-	if err1 != nil {
-		return false
-	}
-	err2 := os.Setenv(constants.OPENAI_API_KEY_NAME, settings["openaiApiKey"])
-	return err2 == nil
 }

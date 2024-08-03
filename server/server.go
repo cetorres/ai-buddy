@@ -11,6 +11,7 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/cetorres/ai-buddy/config"
 	"github.com/cetorres/ai-buddy/constants"
 	"github.com/cetorres/ai-buddy/models"
 	"github.com/cetorres/ai-buddy/pattern"
@@ -27,29 +28,18 @@ type Page struct {
 	Body string
 }
 
-func CreateHTTPServer() {
+func CreateHTTPServer(port int) {
 	// Routes
 	http.HandleFunc("/", handleHomePage)
 	http.HandleFunc("/settings", handleSettingsPage)
-	http.HandleFunc("/settings_values", handleSettingsValue)
-	http.HandleFunc("POST /save_settings", handleSaveSettings)
+	http.HandleFunc("/config", handleGetConfig)
+	http.HandleFunc("POST /save_config", handleSaveConfig)
 	http.HandleFunc("/providers", handleGetProviders)
 	http.HandleFunc("/models", handleGetModels)
 	http.HandleFunc("/patterns", handleGetPatterns)
 	http.HandleFunc("/version", handleGetVersion)
 	http.HandleFunc("POST /execute", handleExecute)
 	http.Handle("/static/", http.FileServer(http.FS(staticDir)))
-
-	// Port
-	port := constants.AI_BUDDY_SERVER_PORT
-	if s := os.Getenv(constants.AI_BUDDY_SERVER_PORT_ENV); s != "" {
-		var err error
-		port, err = strconv.Atoi(s)
-		if err != nil {
-			util.PrintError(fmt.Sprintf("Invalid port: %q", s))
-			os.Exit(1)
-		}
-	}
 
 	// Start server
 	addr := fmt.Sprintf(":%d", port)
@@ -163,28 +153,24 @@ func handleGetPatterns(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func handleSettingsValue(w http.ResponseWriter, r *http.Request) {
-	printLog("GET /settings_values accessed")
+func handleGetConfig(w http.ResponseWriter, r *http.Request) {
+	printLog("GET /config accessed")
 
-	settings := models.GetSettings()
+	conf := config.GetConfig()
 	w.Header().Set("Content-Type", "application/json");
-	json.NewEncoder(w).Encode(settings)
+	json.NewEncoder(w).Encode(conf)
 }
 
-func handleSaveSettings(w http.ResponseWriter, r *http.Request) {
-	printLog("POST /save_settings accessed")
+func handleSaveConfig(w http.ResponseWriter, r *http.Request) {
+	printLog("POST /save_config accessed")
 
 	r.ParseForm()
 
-	googleApiKey := r.Form.Get("googleApiKey")
-	openaiApiKey := r.Form.Get("openaiApiKey")
+	conf := config.GetConfig()
+	conf.GoogleAPIKey = r.Form.Get("googleApiKey")
+	conf.OpenAIAPIKey = r.Form.Get("openaiApiKey")
 
-	settings := map[string]string{
-		"googleApiKey": googleApiKey,
-		"openaiApiKey": openaiApiKey,
-	}
-
-	res := models.SaveSettings(settings)
+	res := config.SetConfig(conf)
 	if res {
 		fmt.Fprint(w, "Settings saved.")
 	} else {

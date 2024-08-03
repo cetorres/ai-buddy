@@ -6,32 +6,47 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/cetorres/ai-buddy/constants"
+	"github.com/cetorres/ai-buddy/config"
+	"github.com/cetorres/ai-buddy/util"
 )
 
 func GetPatternsDir() string {
-	if os.Getenv(constants.PATTERNS_DIR_ENV) != "" {
-		dir := os.Getenv(constants.PATTERNS_DIR_ENV)
-		dir = strings.TrimSuffix(dir, "/")
-		if !strings.Contains(dir, "/patterns") {
-			dir = dir + "/patterns"
-		}
-		return dir
+	configDir := config.GetConfigDirectory()
+
+	if configDir != "" {
+		dirPath := configDir + "patterns"
+		return dirPath
 	}
-	return "./patterns" 
+	return "./patterns"
+}
+
+func IsExistPatternDir() bool {
+	dir := GetPatternsDir()
+	if _, err := os.Stat(dir); os.IsNotExist(err) {
+		return false
+	}
+	return true
+}
+
+func CopyPatternsDirToConfigDir() error {
+	oldDir := "./patterns"
+	newDir := GetPatternsDir()
+	err := util.CopyDir(oldDir, newDir)
+	return err
 }
 
 func GetPatternList() ([]string, error) {
 	var patterns []string
+	patternsDir := GetPatternsDir()
 
-	err := filepath.Walk(GetPatternsDir(), func(path string, info os.FileInfo, err error) error {
+	err := filepath.Walk(patternsDir, func(path string, info os.FileInfo, err error) error {
 			if err != nil {
 					return err
 			}
 
 			pathParts := strings.Split(path, "/")
 			dir := pathParts[max(len(pathParts) - 1,1)]
-			if info.IsDir() && path != GetPatternsDir() && !slices.Contains(patterns, dir) {
+			if info.IsDir() && path != patternsDir && !slices.Contains(patterns, dir) {
 				patterns = append(patterns, dir)
 			}
 
@@ -53,7 +68,6 @@ func GetPatternPrompt(pattern string) string {
 	}
 
 	content, err := os.ReadFile(GetPatternsDir() + "/" + pattern + "/system.md")
-
 	if err != nil {
 		return ""
 	}

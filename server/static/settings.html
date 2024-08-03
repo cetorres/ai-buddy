@@ -41,7 +41,7 @@
     form.setAttribute('disabled', '');
 
     try {
-      const response = await fetch('/save_settings', {
+      const response = await fetch('/save_config', {
         method: 'POST',
         body: new URLSearchParams(new FormData(form))
       });
@@ -59,7 +59,7 @@
 
   async function loadSettings() {
     try {
-      const response = await fetch("/settings_values");
+      const response = await fetch("/config");
       if (!response.ok) {
         throw new Error(`Response status: ${response.status}`);
       }

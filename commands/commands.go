@@ -1,9 +1,12 @@
 package commands
 
 import (
+	"bufio"
+	"fmt"
 	"os"
 	"strings"
 
+	"github.com/cetorres/ai-buddy/config"
 	"github.com/cetorres/ai-buddy/constants"
 	"github.com/cetorres/ai-buddy/models"
 	"github.com/cetorres/ai-buddy/pattern"
@@ -14,11 +17,12 @@ import (
 func HelpCommand() {
 	println(constants.DESCRIPTION)
 	println()
-	if os.Getenv(constants.GOOGLE_API_KEY_NAME) == "" {
-		util.PrintWarning(constants.GOOGLE_API_KEY_NAME + " is missing.")
+	conf := config.GetConfig()
+	if conf.GoogleAPIKey == "" {
+		util.PrintWarning("Google Gemini API key is missing.")
 	}
-	if os.Getenv(constants.OPENAI_API_KEY_NAME) == "" {
-		util.PrintWarning(constants.OPENAI_API_KEY_NAME + " is missing.")
+	if conf.OpenAIAPIKey == "" {
+		util.PrintWarning("OpenAI API key is missing.")
 	}
 	os.Exit(0)
 }
@@ -30,7 +34,7 @@ func ListCommand() {
 		println(strings.Join(patterns, "\n"))
 		os.Exit(0)
 	} else {
-		util.PrintError(err)
+		util.PrintError(fmt.Sprintf("ListCommand: %s", err))
 		os.Exit(1)
 	}
 }
@@ -66,6 +70,8 @@ func ViewCommand(patternName string) {
 }
 
 func PatternCommand(modelName string, patternName string, text string, provider int) {
+	conf := config.GetConfig()
+
 	patternPrompt := pattern.GetPatternPrompt(patternName)
 	if patternPrompt == "" {
 		util.PrintError("Pattern '"+ patternName + "' not found.")
@@ -73,7 +79,11 @@ func PatternCommand(modelName string, patternName string, text string, provider 
 	}
 
 	if provider == models.MODEL_PROVIDER_UNKNOWN {
-		provider = models.MODEL_PROVIDER_GOOGLE
+		if conf.GoogleAPIKey != "" {
+			provider = models.MODEL_PROVIDER_GOOGLE
+		} else if conf.OpenAIAPIKey != "" {
+			provider = models.MODEL_PROVIDER_OPENAI
+		}
 	}
 	
 	if strings.Contains(modelName, "gpt") {
@@ -81,13 +91,13 @@ func PatternCommand(modelName string, patternName string, text string, provider 
 	}
 
 	if provider == models.MODEL_PROVIDER_GOOGLE || provider == models.MODEL_PROVIDER_OPENAI {
-		if provider == models.MODEL_PROVIDER_GOOGLE && os.Getenv(constants.GOOGLE_API_KEY_NAME) == "" {
-			util.PrintError(constants.GOOGLE_API_KEY_NAME + " is missing.")
+		if provider == models.MODEL_PROVIDER_GOOGLE && conf.GoogleAPIKey == "" {
+			util.PrintError("Google Gemini API key is missing.")
 			os.Exit(1)
 		}
 
-		if provider == models.MODEL_PROVIDER_OPENAI && os.Getenv(constants.OPENAI_API_KEY_NAME) == "" {
-			util.PrintError(constants.OPENAI_API_KEY_NAME + " is missing.")
+		if provider == models.MODEL_PROVIDER_OPENAI && conf.OpenAIAPIKey == "" {
+			util.PrintError("OpenAI API key is missing.")
 			os.Exit(1)
 		}
 
@@ -98,13 +108,63 @@ func PatternCommand(modelName string, patternName string, text string, provider 
 	}
 
 	if modelName == "" {
-		modelName = models.GetDefaultModel()
+		modelName = models.GetDefaultModel(provider)
 	}
 
 	model := models.Model{Provider: provider, Name: modelName}
 	model.SendPromptToModel(patternPrompt + text, nil)
 }
 
-func ServeCommand() {
-	server.CreateHTTPServer()
+func ServeCommand(port int) {
+	server.CreateHTTPServer(port)
+}
+
+func SetupCommand() {
+	conf := config.GetConfig()
+	var googleApiKey, openaiApiKey string
+	
+	println("Welcome to ai-buddy. Let's get started.")
+	println("\nCurrent configuration:")
+
+	reader := bufio.NewReader(os.Stdin)
+	
+	fmt.Printf("-> Google Gemini API key: %s\n", conf.GoogleAPIKey)
+	fmt.Printf("-> OpenAI API key: %s\n", conf.OpenAIAPIKey)
+
+	println("\nTip: Leave field blank to not change it.")
+
+	print("\n- Enter your Google Gemini API key: ")
+  googleApiKey, err := reader.ReadString('\n')
+	if err != nil {
+		util.PrintError(err)
+	}
+	googleApiKey = strings.Trim(strings.TrimSpace(googleApiKey), "\n")
+	if googleApiKey != "" {
+		conf.GoogleAPIKey = googleApiKey
+	}
+	
+	print("- Enter your OpenAI API key: ")
+	openaiApiKey, err = reader.ReadString('\n')
+	if err != nil {
+		util.PrintError(err)
+	}
+	openaiApiKey = strings.Trim(strings.TrimSpace(openaiApiKey), "\n")
+	if openaiApiKey != "" {
+		conf.OpenAIAPIKey = openaiApiKey
+	}
+	
+	// Save config
+	config.SetConfig(conf)
+
+	println()
+
+	util.PrintColor(util.COLOR_GREEN, "-> Configuration saved successfully.")
+
+	// Copy patterns folder to config
+	err = pattern.CopyPatternsDirToConfigDir()
+	if err != nil {
+		util.PrintError(fmt.Sprintf("Error on copying patterns: %s", err))
+	} else {
+		util.PrintColor(util.COLOR_GREEN, "-> Patterns copied to config directory successfully.")
+	}
 }

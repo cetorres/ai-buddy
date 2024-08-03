@@ -4,13 +4,26 @@ import (
 	"io"
 	"os"
 	"slices"
+	"strconv"
 
 	"github.com/cetorres/ai-buddy/commands"
+	"github.com/cetorres/ai-buddy/config"
+	"github.com/cetorres/ai-buddy/constants"
 	"github.com/cetorres/ai-buddy/models"
+	"github.com/cetorres/ai-buddy/pattern"
 	"github.com/cetorres/ai-buddy/util"
 )
 
 func main() {
+	// Get config
+	conf := config.GetConfig()
+
+	// Check for setup
+	if conf.GoogleAPIKey == "" && conf.OpenAIAPIKey == "" && !pattern.IsExistPatternDir() && !slices.Contains(os.Args, "-o") && !slices.Contains(os.Args, "--ollama") {
+		commands.SetupCommand()
+		os.Exit(0)
+	}
+
 	// Check API keys and number of arguments, and show help
 	if len(os.Args) < 2 {
 		commands.HelpCommand()
@@ -23,9 +36,9 @@ func main() {
 		os.Exit(0)
 	}
 
-	// Check for webui command
-	if len(os.Args) == 2 && (os.Args[1] == "-w" || os.Args[1] == "--webui") {
-		commands.ServeCommand()
+	// Check for setup command
+	if len(os.Args) == 2 && (os.Args[1] == "-s" || os.Args[1] == "--setup") {
+		commands.SetupCommand()
 		os.Exit(0)
 	}
 
@@ -45,6 +58,21 @@ func main() {
 	} else if len(os.Args) == 2 && (os.Args[1] == "-v" || os.Args[1] == "--view") {
 		util.PrintError("A pattern was not specified.")
 		os.Exit(1)
+	}
+
+	// Check for webui command
+	if len(os.Args) == 2 && (os.Args[1] == "-w" || os.Args[1] == "--webui") {
+		commands.ServeCommand(constants.AI_BUDDY_SERVER_PORT)
+		os.Exit(0)
+	}
+	if len(os.Args) == 4 && (os.Args[1] == "-w" || os.Args[1] == "--webui") && os.Args[2] == "--port" && os.Args[3] != "" {
+		port, err := strconv.Atoi(os.Args[3])
+		if err != nil {
+			util.PrintError(err)
+			return
+		}
+		commands.ServeCommand(port)
+		os.Exit(0)
 	}
 
 	//

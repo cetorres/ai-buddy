@@ -8,14 +8,14 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/cetorres/ai-buddy/constants"
+	"github.com/cetorres/ai-buddy/config"
 	"github.com/cetorres/ai-buddy/util"
 	"github.com/sashabaranov/go-openai"
 )
 
 func CreateOpenAIChatStream(modelName string, prompt string, w http.ResponseWriter) {
-	apiKey := os.Getenv(constants.OPENAI_API_KEY_NAME)
-	client := openai.NewClient(apiKey)
+	conf := config.GetConfig()
+	client := openai.NewClient(conf.OpenAIAPIKey)
 	ctx := context.Background()
 
 	req := openai.ChatCompletionRequest{
@@ -74,5 +74,6 @@ func CreateOpenAIChatStream(modelName string, prompt string, w http.ResponseWrit
 }
 
 func IsOpenAIPresent() bool {
-	return os.Getenv(constants.OPENAI_API_KEY_NAME) != ""
+	conf := config.GetConfig()
+	return conf.OpenAIAPIKey != ""
 }
