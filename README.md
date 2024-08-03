@@ -92,7 +92,10 @@ The current list of patterns was copied from the [Fabric](https://github.com/dan
 - Start an HTTP server with the web UI of the app.
 - You can use the web UI as an alternative to interact with the app.
 - By default, it starts a local HTTP server on port 8080, but you can change the port.
-- Set an environment variable: export AI_BUDDY_SERVER_PORT=`<port>`
+
+```sh
+$ ai-buddy --webui --port 8082
+```
 
 ## Output
 
