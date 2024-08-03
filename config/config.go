@@ -15,7 +15,7 @@ type Config struct {
 	OpenAIAPIKey string `json:"openaiApiKey"`
 }
 
-func makeConfig(googleApiKey string, openaiApiKey string, defaultModel string) Config {
+func makeConfig(googleApiKey string, openaiApiKey string) Config {
 	return Config{
 		GoogleAPIKey: googleApiKey,
 		OpenAIAPIKey: openaiApiKey,
@@ -56,7 +56,7 @@ func createConfigFile() (*os.File, error) {
 }
 
 func GetConfig() Config {
-	config := makeConfig("", "", "")
+	config := makeConfig("", "")
 	var file *os.File
 
 	file, err := os.OpenFile(getConfigFilePath(), os.O_RDWR, 0644)
