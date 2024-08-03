@@ -34,10 +34,10 @@ For [Google Gemini](https://gemini.google.com/app) API it's using the following 
 - gemini-1.5-flash
 - gemini-1.0-pro
 
-You can obtain your own API key and set an environment variable with it:
+You can obtain your own API key and enter it during the app set up:
 
 ```sh
-$ export GEMINI_API_KEY=<your_key_here>
+$ ai-buddy --setup
 ```
 
 Get your free API key at <https://aistudio.google.com/app/apikey>.
@@ -51,10 +51,10 @@ For [OpenAI ChatGPT](https://chat.openai.com/) API it's using the following mode
 - gpt-4o
 - gpt-4-turbo
 
-You can obtain your own API key and set an environment variable with it:
+You can obtain your own API key and enter it during the app set up:
 
 ```sh
-$ export OPENAI_API_KEY=<your_key_here>
+$ ai-buddy --setup
 ```
 
 Get your free API key at <https://platform.openai.com/api-keys>.
@@ -81,11 +81,7 @@ Patterns are crowdsourced curated special prompts that improve the quality of th
 
 Take a look at the [./patterns](./patterns/) folder and check how they are created and work.
 
-You can use the patterns directory in the same location of the binary, this is by default. Or you can set an environment variable if you want to move the binary to another directory. Set the environment variable: 
-
-```sh
-$ export AI_BUDDY_PATTERNS=<your_dir>/patterns
-```
+The patterns directory is copied to the config directory after the first setup of the app (or running `ai-buddy --setup`).
 
 The current list of patterns was copied from the [Fabric](https://github.com/danielmiessler/fabric) project.
 
@@ -101,58 +97,52 @@ The current list of patterns was copied from the [Fabric](https://github.com/dan
 ## Output
 
 ```
-ai-buddy 1.1.4 - Created by Carlos E. Torres (https://github.com/cetorres)
-
+ai-buddy 1.1.5 - Created by Carlos E. Torres (https://github.com/cetorres)
 AI tool to help solving problems using prompt engineering from a set of crowdsourced AI prompts.
 
 Example usage:
-	echo "Text to summarize..." | ai-buddy -p summarize
-	ai-buddy -p summarize "Text to summarize..."
-	ai-buddy -p summarize -m gemini-1.5-pro "Text to summarize..."
-	ai-buddy -p summarize -m gpt-3.5-turbo "Text to summarize..."
-	cat MyEssayText.txt | ai-buddy -p analyze_claims
-	pbpaste | ai-buddy -p summarize | pbcopy
-	cat text.txt | ai-buddy -p summarize -m gemini-1.5-pro
-	ai-buddy -p summarize -o -m llama3 "Text to summarize..."
-	ai-buddy --webui
+        echo "Text to summarize..." | ai-buddy -p summarize
+        ai-buddy -p summarize "Text to summarize..."
+        ai-buddy -p summarize -m gemini-1.5-pro "Text to summarize..."
+        ai-buddy -p summarize -m gpt-3.5-turbo "Text to summarize..."
+        cat MyEssayText.txt | ai-buddy -p analyze_claims
+        pbpaste | ai-buddy -p summarize | pbcopy
+        cat text.txt | ai-buddy -p summarize -m gemini-1.5-pro
+        ai-buddy -p summarize -o -m llama3 "Text to summarize..."
+        ai-buddy --webui
 
 Commands:
-	-p, --pattern <pattern_name> <prompt>  Specify a pattern and send prompt to model. Requires pattern name and prompt (also receive via pipe).
-	-o, --ollama                           Use Ollama local server. You should specify the model name available on your local Ollama server.
-	-m, --model <model_name>               Specify the model name to use.
-	-l, --list                             List all available patterns.
-	-v, --view <pattern_name>              View pattern prompt. Requires pattern name.
-	-lm, --list-models                     List all available models.
-	-w, --webui                            Start an HTTP server with the web UI of the app.
-	-h, --help                             Show this help.
+        -s, --setup                            Set up the app with the necessary configuration.
+        -p, --pattern <pattern_name> <prompt>  Specify a pattern and send prompt to model. Requires pattern name and prompt (also receive via pipe).
+        -o, --ollama                           Use Ollama local server. You should specify the model name available on your local Ollama server.
+        -m, --model <model_name>               Specify the model name to use.
+        -l, --list                             List all available patterns.
+        -v, --view <pattern_name>              View pattern prompt. Requires pattern name.
+        -lm, --list-models                     List all available models.
+        -w, --webui [--port <port_number>]     Start an HTTP server with the web UI of the app. Optional argument: --port <port_number>.
+        -h, --help                             Show this help.
 
 Google Gemini API:
-	- Get your API key at https://aistudio.google.com/app/apikey
-	- Set an environment variable: export GEMINI_API_KEY=<your_key_here>
+        - To use this API, enter the key on the setup command.
+        - Get your API key at https://aistudio.google.com/app/apikey
 
 OpenAI ChatGPT API:
-	- Get your API key at https://platform.openai.com/api-keys
-	- Set an environment variable: export OPENAI_API_KEY=<your_key_here>
+        - To use this API, enter the key on the setup command.
+        - Get your API key at https://platform.openai.com/api-keys
 
 Default model to use:
-	- By default, the model "gemini-1.5-pro" from Google or "gpt-3.5-turbo" from OpenAI are used, depending on the API KEY entered.
-	- You can set a custom default model via an environment variable: export AI_BUDDY_MODEL=<model_name>
+        - By default, the model "gemini-1.5-pro" from Google or "gpt-3.5-turbo" from OpenAI are used, depending on the API KEY entered.
+        - You can set a custom default model on the setup command.
 
 Ollama:
-	- To use Ollama (https://ollama.com), please download the Ollama app, install it and download an AI model.
-	- It runs locally on your machine and can use free and open source models like llama3 or gemma2.
-	- A list of all available models can be accessed at https://ollama.com/library.
-	- You can set a custom Ollama URL via an environment variable: export OLLAMA_HOST=<ollama_url>
-
-Patterns directory:
-	- You can use the patterns directory in the same location of the binary (./patterns), this is by default.
-	- Or you can set an environment variable if you want to move the binary to another directory.
-	- Set the environment variable: export AI_BUDDY_PATTERNS=<your_dir>/patterns
+        - To use Ollama (https://ollama.com), please download the Ollama app, install it and download an AI model.
+        - It runs locally on your machine and can use free and open source models like llama3 or gemma2.
+        - A list of all available models can be accessed at https://ollama.com/library.
+        - You can set a custom Ollama URL via an environment variable: export OLLAMA_HOST=<ollama_url>
 
 Web UI:
-	- You can use the web UI as an alternative to interact with the app.
-	- By default, it starts a local HTTP server on port 8080, but you can change the port.
-	- Set an environment variable: export AI_BUDDY_SERVER_PORT=<port>
+        - You can use the web UI as an alternative to interact with the app.
+        - By default, it starts a local HTTP server on port 8080, but you can change the port with --port <port_number>.
 ```
 
 ## More info

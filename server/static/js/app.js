@@ -33,3 +33,20 @@ function setTheme (toggle = false) {
 setTheme();
 document.getElementById('modeButton').addEventListener('click', () => setTheme(true));
 window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => setTheme());
+
+async function getVersion() {
+  const version = document.getElementById('version');
+  try {
+    const response = await fetch("/version");
+    if (!response.ok) {
+      console.log(`Error ${response.status}: ${response.errorMessage}`);
+      return;
+    }
+    const body = await response.text();
+    version.innerHTML = body;
+  } catch (error) {
+    console.log("Error: " + error);
+  }
+}
+
+getVersion()

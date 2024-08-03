@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/cetorres/ai-buddy/constants"
+	"github.com/cetorres/ai-buddy/config"
 	"github.com/cetorres/ai-buddy/util"
 	"github.com/google/generative-ai-go/genai"
 	"google.golang.org/api/iterator"
@@ -14,9 +14,9 @@ import (
 )
 
 func CreateGoogleMessageStream(modelName string, prompt string, w http.ResponseWriter) {
-	apiKey := os.Getenv(constants.GOOGLE_API_KEY_NAME)
+	conf := config.GetConfig()
 	ctx := context.Background()
-	client, err := genai.NewClient(ctx, option.WithAPIKey(apiKey))
+	client, err := genai.NewClient(ctx, option.WithAPIKey(conf.GoogleAPIKey))
 
 	if err != nil {
 		if w != nil {
@@ -74,5 +74,6 @@ func PrintGoogleResponse(resp *genai.GenerateContentResponse, w http.ResponseWri
 }
 
 func IsGooglePresent() bool {
-	return os.Getenv(constants.GOOGLE_API_KEY_NAME) != ""
+	conf := config.GetConfig()
+	return conf.GoogleAPIKey != ""
 }
