@@ -34,10 +34,10 @@ For [Google Gemini](https://gemini.google.com/app) API it's using the following 
 - gemini-1.5-flash
 - gemini-1.0-pro
 
-You can obtain your own API key and set an environment variable with it:
+You can obtain your own API key and enter it during the app set up:
 
 ```sh
-$ export GEMINI_API_KEY=<your_key_here>
+$ ai-buddy --setup
 ```
 
 Get your free API key at <https://aistudio.google.com/app/apikey>.
@@ -51,10 +51,10 @@ For [OpenAI ChatGPT](https://chat.openai.com/) API it's using the following mode
 - gpt-4o
 - gpt-4-turbo
 
-You can obtain your own API key and set an environment variable with it:
+You can obtain your own API key and enter it during the app set up:
 
 ```sh
-$ export OPENAI_API_KEY=<your_key_here>
+$ ai-buddy --setup
 ```
 
 Get your free API key at <https://platform.openai.com/api-keys>.
@@ -81,11 +81,7 @@ Patterns are crowdsourced curated special prompts that improve the quality of th
 
 Take a look at the [./patterns](./patterns/) folder and check how they are created and work.
 
-You can use the patterns directory in the same location of the binary, this is by default. Or you can set an environment variable if you want to move the binary to another directory. Set the environment variable: 
-
-```sh
-$ export AI_BUDDY_PATTERNS=<your_dir>/patterns
-```
+The patterns directory is copied to the config directory after the first setup of the app (or running `ai-buddy --setup`).
 
 The current list of patterns was copied from the [Fabric](https://github.com/danielmiessler/fabric) project.
 
