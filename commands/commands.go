@@ -158,13 +158,13 @@ func SetupCommand() {
 
 	println()
 
-	util.PrintColor(util.COLOR_GREEN, "-> Configuration saved successfully.")
+	util.PrintSuccess("-> Configuration saved successfully.")
 
 	// Copy patterns folder to config
 	err = pattern.CopyPatternsDirToConfigDir()
 	if err != nil {
-		util.PrintError(fmt.Sprintf("Error on copying patterns: %s", err))
+		util.PrintError(fmt.Sprintf("Could not copy patterns directory: %s", err))
 	} else {
-		util.PrintColor(util.COLOR_GREEN, "-> Patterns copied to config directory successfully.")
+		util.PrintSuccess("-> Patterns copied to config directory successfully.")
 	}
 }
