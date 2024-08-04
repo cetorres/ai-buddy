@@ -75,6 +75,18 @@ You can set a custom Ollama URL via an environment variable:
 $ export OLLAMA_HOST=<ollama_url>
 ```
 
+On **Windows**, the Ollama API sometimes can show an error:
+
+```
+ERROR unable to locate llm runner directory.  Set OLLAMA_RUNNERS_DIR to the location of 'ollama_runners'
+```
+
+To clear that error, just set an environment variable:
+
+```sh
+$ set OLLAMA_RUNNERS_DIR=test
+```
+
 ## Patterns
 
 Patterns are crowdsourced curated special prompts that improve the quality of the model's response for a given request.
@@ -100,7 +112,7 @@ $ ai-buddy --webui --port 8082
 ## Output
 
 ```
-ai-buddy 1.1.5 - Created by Carlos E. Torres (https://github.com/cetorres)
+ai-buddy 1.1.6 - Created by Carlos E. Torres (https://github.com/cetorres)
 AI tool to help solving problems using prompt engineering from a set of crowdsourced AI prompts.
 
 Example usage:

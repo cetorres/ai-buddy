@@ -2,9 +2,7 @@ package pattern
 
 import (
 	"os"
-	"path/filepath"
 	"slices"
-	"strings"
 
 	"github.com/cetorres/ai-buddy/config"
 	"github.com/cetorres/ai-buddy/util"
@@ -39,22 +37,15 @@ func GetPatternList() ([]string, error) {
 	var patterns []string
 	patternsDir := GetPatternsDir()
 
-	err := filepath.Walk(patternsDir, func(path string, info os.FileInfo, err error) error {
-			if err != nil {
-					return err
-			}
-
-			pathParts := strings.Split(path, "/")
-			dir := pathParts[max(len(pathParts) - 1,1)]
-			if info.IsDir() && path != patternsDir && !slices.Contains(patterns, dir) {
-				patterns = append(patterns, dir)
-			}
-
-			return nil
-	})
-
+	files, err := os.ReadDir(patternsDir)
 	if err != nil {
 		return nil, err
+	}
+
+	for _, f := range files {
+		if f.IsDir() {
+			patterns = append(patterns, f.Name())
+		}
 	}
 
 	return patterns, nil
