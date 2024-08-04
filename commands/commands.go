@@ -15,9 +15,12 @@ import (
 )
 
 func HelpCommand() {
-	println(constants.DESCRIPTION)
+	print(constants.DESCRIPTION)
 	println()
 	conf := config.GetConfig()
+	if conf.GoogleAPIKey == "" || conf.OpenAIAPIKey == "" {
+		println()
+	}
 	if conf.GoogleAPIKey == "" {
 		util.PrintWarning("Google Gemini API key is missing.")
 	}

@@ -112,7 +112,7 @@ $ ai-buddy --webui --port 8082
 ## Output
 
 ```
-ai-buddy 1.1.6 - Created by Carlos E. Torres (https://github.com/cetorres)
+ai-buddy 1.1.7 - Created by Carlos E. Torres (https://github.com/cetorres)
 AI tool to help solving problems using prompt engineering from a set of crowdsourced AI prompts.
 
 Example usage:
