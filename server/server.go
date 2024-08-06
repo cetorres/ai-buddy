@@ -28,7 +28,19 @@ type Page struct {
 	Body string
 }
 
-func CreateHTTPServer(port int) {
+type Server struct {
+	Port int
+	BaseURL string
+}
+
+func NewServer(port int) *Server {
+	return &Server{
+		Port: port,
+		BaseURL: "http://127.0.0.1",
+	}
+}
+
+func (s *Server) Serve() {
 	// Routes
 	http.HandleFunc("/", handleHomePage)
 	http.HandleFunc("/settings", handleSettingsPage)
@@ -42,8 +54,8 @@ func CreateHTTPServer(port int) {
 	http.Handle("/static/", http.FileServer(http.FS(staticDir)))
 
 	// Start server
-	addr := fmt.Sprintf(":%d", port)
-	fmt.Printf("ai-buddy server running on http://127.0.0.1%s\n", addr)
+	addr := fmt.Sprintf(":%d", s.Port)
+	fmt.Printf("ai-buddy server running on %s%s\n", s.BaseURL, addr)
 	if err := http.ListenAndServe(addr, nil); err != nil {
 		util.PrintError(err)
 		os.Exit(1)
@@ -100,6 +112,9 @@ func handleGetProviders(w http.ResponseWriter, r *http.Request) {
 	if models.IsOpenAIPresent() {
 		providersHtml += fmt.Sprintf(`<option value="%d">%s</option>`, models.MODEL_PROVIDER_OPENAI, models.MODEL_PROVIDERS_NAMES[models.MODEL_PROVIDER_OPENAI])
 	}
+	if models.IsClaudePresent() {
+		providersHtml += fmt.Sprintf(`<option value="%d">%s</option>`, models.MODEL_PROVIDER_CLAUDE, models.MODEL_PROVIDERS_NAMES[models.MODEL_PROVIDER_CLAUDE])
+	}
 	if models.IsOllamaPresent() {
 		providersHtml += fmt.Sprintf(`<option value="%d">%s</option>`, models.MODEL_PROVIDER_OLLAMA, models.MODEL_PROVIDERS_NAMES[models.MODEL_PROVIDER_OLLAMA])
 	}
@@ -123,7 +138,9 @@ func handleGetModels(w http.ResponseWriter, r *http.Request) {
 		modelsList = models.MODEL_NAMES_GOOGLE
 	} else if (provider == models.MODEL_PROVIDER_OPENAI) {
 		modelsList = models.MODEL_NAMES_OPENAI
-	} else if (provider == models.MODEL_PROVIDER_OLLAMA) {
+	} else if (provider == models.MODEL_PROVIDER_CLAUDE) {
+		modelsList = models.MODEL_NAMES_CLAUDE
+	}	else if (provider == models.MODEL_PROVIDER_OLLAMA) {
 		ollamaModels, err := models.GetOllamaModels()
 		if err == nil {
 			modelsList = ollamaModels
@@ -169,6 +186,7 @@ func handleSaveConfig(w http.ResponseWriter, r *http.Request) {
 	conf := config.GetConfig()
 	conf.GoogleAPIKey = r.Form.Get("googleApiKey")
 	conf.OpenAIAPIKey = r.Form.Get("openaiApiKey")
+	conf.ClaudeAPIKey = r.Form.Get("claudeApiKey")
 
 	res := config.SetConfig(conf)
 	if res {
@@ -245,7 +263,7 @@ func handleExecute(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Cache-Control", "no-cache")
 	w.Header().Set("Connection", "keep-alive")
 
-	model := models.Model{Provider: provider, Name: modelName}
+	model := models.NewModel(provider, modelName)
 	model.SendPromptToModel(patternPrompt + prompt, w)
 }
 

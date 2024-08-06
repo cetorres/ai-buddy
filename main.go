@@ -19,7 +19,7 @@ func main() {
 	conf := config.GetConfig()
 
 	// Check for setup
-	if conf.GoogleAPIKey == "" && conf.OpenAIAPIKey == "" && !pattern.IsExistPatternDir() && !slices.Contains(os.Args, "-o") && !slices.Contains(os.Args, "--ollama") {
+	if conf.GoogleAPIKey == "" && conf.OpenAIAPIKey == "" && conf.ClaudeAPIKey == "" && !pattern.IsExistPatternDir() && !slices.Contains(os.Args, "-o") && !slices.Contains(os.Args, "--ollama") {
 		commands.SetupCommand()
 		os.Exit(0)
 	}

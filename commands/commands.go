@@ -51,6 +51,9 @@ func ListModelsCommand() {
 	println("\nOpenAI ChatGPT models:")
 	println(strings.Join(models.MODEL_NAMES_OPENAI, "\n"))
 
+	println("\nAnthropic Claude models:")
+	println(strings.Join(models.MODEL_NAMES_CLAUDE, "\n"))
+
 	ollamaModels, err := models.GetOllamaModels()
 	if err == nil {
 		println("\nOllama models:")
@@ -86,14 +89,18 @@ func PatternCommand(modelName string, patternName string, text string, provider 
 			provider = models.MODEL_PROVIDER_GOOGLE
 		} else if conf.OpenAIAPIKey != "" {
 			provider = models.MODEL_PROVIDER_OPENAI
+		} else if conf.ClaudeAPIKey != "" {
+			provider = models.MODEL_PROVIDER_CLAUDE
 		}
 	}
 	
 	if strings.Contains(modelName, "gpt") {
 		provider = models.MODEL_PROVIDER_OPENAI
+	} else if strings.Contains(modelName, "claude") {
+		provider = models.MODEL_PROVIDER_CLAUDE
 	}
 
-	if provider == models.MODEL_PROVIDER_GOOGLE || provider == models.MODEL_PROVIDER_OPENAI {
+	if provider == models.MODEL_PROVIDER_GOOGLE || provider == models.MODEL_PROVIDER_OPENAI || provider == models.MODEL_PROVIDER_CLAUDE {
 		if provider == models.MODEL_PROVIDER_GOOGLE && conf.GoogleAPIKey == "" {
 			util.PrintError("Google Gemini API key is missing.")
 			os.Exit(1)
@@ -101,6 +108,11 @@ func PatternCommand(modelName string, patternName string, text string, provider 
 
 		if provider == models.MODEL_PROVIDER_OPENAI && conf.OpenAIAPIKey == "" {
 			util.PrintError("OpenAI API key is missing.")
+			os.Exit(1)
+		}
+
+		if provider == models.MODEL_PROVIDER_CLAUDE && conf.ClaudeAPIKey == "" {
+			util.PrintError("Anthropic Claude API key is missing.")
 			os.Exit(1)
 		}
 
@@ -114,17 +126,17 @@ func PatternCommand(modelName string, patternName string, text string, provider 
 		modelName = models.GetDefaultModel(provider)
 	}
 
-	model := models.Model{Provider: provider, Name: modelName}
+	model := models.NewModel(provider, modelName)
 	model.SendPromptToModel(patternPrompt + text, nil)
 }
 
 func ServeCommand(port int) {
-	server.CreateHTTPServer(port)
+	server.NewServer(port).Serve()
 }
 
 func SetupCommand() {
 	conf := config.GetConfig()
-	var googleApiKey, openaiApiKey string
+	var googleApiKey, openaiApiKey, claudeApiKey string
 	
 	println("Welcome to ai-buddy. Let's get started.")
 	println("\nCurrent configuration:")
@@ -133,6 +145,7 @@ func SetupCommand() {
 	
 	fmt.Printf("-> Google Gemini API key: %s\n", conf.GoogleAPIKey)
 	fmt.Printf("-> OpenAI API key: %s\n", conf.OpenAIAPIKey)
+	fmt.Printf("-> Anthropic Claude API key: %s\n", conf.ClaudeAPIKey)
 
 	println("\nTip: Leave field blank to not change it.")
 
@@ -154,6 +167,16 @@ func SetupCommand() {
 	openaiApiKey = strings.Trim(strings.TrimSpace(openaiApiKey), "\n")
 	if openaiApiKey != "" {
 		conf.OpenAIAPIKey = openaiApiKey
+	}
+
+	print("- Enter your Anthropic Claude API key: ")
+	claudeApiKey, err = reader.ReadString('\n')
+	if err != nil {
+		util.PrintError(err)
+	}
+	claudeApiKey = strings.Trim(strings.TrimSpace(claudeApiKey), "\n")
+	if claudeApiKey != "" {
+		conf.ClaudeAPIKey = claudeApiKey
 	}
 	
 	// Save config

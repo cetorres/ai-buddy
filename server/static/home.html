@@ -80,6 +80,7 @@
   const submitLoading = document.querySelector('#submitButton .loading');
   const errorMessage = document.getElementById('errorMessage');
   const copied = document.getElementById('copied');
+  let autoScroll = true;
 
   showError('');
   showLoading(false);
@@ -98,6 +99,7 @@
 
     showError('');
     showLoading(true);
+    autoScroll = true;
 
     try {
       const response = await fetch('/execute', {
@@ -120,10 +122,12 @@
         if (done) break;
 
         result.value += value;
-        result.scrollTop = result.scrollHeight;
-        
         resultMarkdown.innerHTML = marked.parse(result.value);
-        resultMarkdown.scrollTop = resultMarkdown.scrollHeight;
+
+        if (autoScroll) {
+          result.scrollTop = result.scrollHeight;
+          resultMarkdown.scrollTop = resultMarkdown.scrollHeight;
+        }
       }
     } catch (error) {
       showError("Error: " + error);
@@ -132,6 +136,27 @@
 
     showLoading(false);
   });
+
+  result.addEventListener("wheel", handleChangeWheel);
+  resultMarkdown.addEventListener("wheel", handleChangeWheel);
+
+  function handleChangeWheel(event) {
+    if (scrollDirectionIsUp(event)) {
+      autoScroll = false;
+    }
+    else {
+      if (event.target.scrollTop + event.target.clientHeight >= event.target.scrollHeight + 0.5) {
+        autoScroll = true;
+      }
+    }
+  }
+
+  function scrollDirectionIsUp(event) {
+    if (event.wheelDelta) {
+      return event.wheelDelta > 0;
+    }
+    return event.deltaY < 0;
+  }
 
   async function loadProviders() {
     try {
