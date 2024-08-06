@@ -8,8 +8,6 @@ It currently supports Google Gemini API, OpenAI ChatGPT API, and local Ollama se
 
 ## Demo
 
-![demo1.gif](./demo1.gif)
-
 ![demo2.gif](./demo2.gif)
 
 ## Build and usage
