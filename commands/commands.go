@@ -18,7 +18,7 @@ func HelpCommand() {
 	print(constants.DESCRIPTION)
 	println()
 	conf := config.GetConfig()
-	if conf.GoogleAPIKey == "" || conf.OpenAIAPIKey == "" {
+	if conf.GoogleAPIKey == "" || conf.OpenAIAPIKey == "" || conf.ClaudeAPIKey == "" {
 		println()
 	}
 	if conf.GoogleAPIKey == "" {
@@ -26,6 +26,9 @@ func HelpCommand() {
 	}
 	if conf.OpenAIAPIKey == "" {
 		util.PrintWarning("OpenAI API key is missing.")
+	}
+	if conf.ClaudeAPIKey == "" {
+		util.PrintWarning("Anthropic Claude API key is missing.")
 	}
 	os.Exit(0)
 }
