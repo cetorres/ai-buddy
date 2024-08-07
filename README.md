@@ -73,18 +73,6 @@ You can set a custom Ollama URL via an environment variable:
 $ export OLLAMA_HOST=<ollama_url>
 ```
 
-On **Windows**, the Ollama API sometimes can show an error:
-
-```
-ERROR unable to locate llm runner directory.  Set OLLAMA_RUNNERS_DIR to the location of 'ollama_runners'
-```
-
-To clear that error, just set an environment variable:
-
-```sh
-$ set OLLAMA_RUNNERS_DIR=test
-```
-
 ## Patterns
 
 Patterns are crowdsourced curated special prompts that improve the quality of the model's response for a given request.
