@@ -13,7 +13,7 @@ import (
 	"google.golang.org/api/option"
 )
 
-func CreateGoogleMessageStream(modelName string, prompt string, w http.ResponseWriter) {
+func (m Model) CreateGoogleMessageStream(prompt string, w http.ResponseWriter) {
 	conf := config.GetConfig()
 	ctx := context.Background()
 	client, err := genai.NewClient(ctx, option.WithAPIKey(conf.GoogleAPIKey))
@@ -32,7 +32,7 @@ func CreateGoogleMessageStream(modelName string, prompt string, w http.ResponseW
 	
 	defer client.Close()
 	
-	model := client.GenerativeModel(modelName)
+	model := client.GenerativeModel(m.Name)
 	session := model.StartChat()
 
 	iter := session.SendMessageStream(ctx, genai.Text(prompt))
@@ -54,11 +54,11 @@ func CreateGoogleMessageStream(modelName string, prompt string, w http.ResponseW
 			}
 		}
 
-		PrintGoogleResponse(response, w)
+		printGoogleResponse(response, w)
 	}
 }
 
-func PrintGoogleResponse(resp *genai.GenerateContentResponse, w http.ResponseWriter) {
+func printGoogleResponse(resp *genai.GenerateContentResponse, w http.ResponseWriter) {
 	for _, cand := range resp.Candidates {
 		if cand.Content != nil {
 			for _, part := range cand.Content.Parts {

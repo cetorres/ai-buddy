@@ -4,7 +4,7 @@ A terminal command in Go that is an AI tool to help solving problems using promp
 
 It's heavily inspired by [Daniel Miessler](https://github.com/danielmiessler)'s tool [Fabric](https://github.com/danielmiessler/fabric). I created this as a simplified Go version, that's compiled, and probably a bit faster.
 
-It currently supports Google Gemini API, OpenAI ChatGPT API, and local Ollama server.
+It currently supports Google Gemini API, OpenAI ChatGPT API, Anthropic Claude API, and local Ollama server.
 
 ## Demo
 
@@ -56,6 +56,23 @@ $ ai-buddy --setup
 ```
 
 Get your free API key at <https://platform.openai.com/api-keys>.
+
+### Anthropic Claude API
+
+For [Anthropic Claude](https://www.anthropic.com/) API it's using the following models:
+
+- claude-3-5-sonnet-20240620
+- claude-3-opus-20240229
+- claude-3-sonnet-20240229
+- claude-3-haiku-20240307
+
+You can obtain your own API key and enter it during the app set up:
+
+```sh
+$ ai-buddy --setup
+```
+
+Get your free API key at <https://console.anthropic.com/settings/keys>.
 
 ### Ollama
 

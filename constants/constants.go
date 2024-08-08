@@ -39,9 +39,9 @@ OpenAI ChatGPT API:
 	- To use this API, enter the key on the setup command.
 	- Get your API key at https://platform.openai.com/api-keys
 
-Default model to use:
-	- By default, the model "gemini-1.5-pro" from Google or "gpt-3.5-turbo" from OpenAI are used, depending on the API KEY entered.
-	- You can set a custom default model on the setup command.
+Anthropic Claude API:
+	- To use this API, enter the key on the setup command.
+	- Get your API key at https://console.anthropic.com/settings/keys
 
 Ollama:
 	- To use Ollama (https://ollama.com), please download the Ollama app, install it and download an AI model.

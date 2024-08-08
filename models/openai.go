@@ -13,13 +13,13 @@ import (
 	"github.com/sashabaranov/go-openai"
 )
 
-func CreateOpenAIChatStream(modelName string, prompt string, w http.ResponseWriter) {
+func (m Model) CreateOpenAIChatStream(prompt string, w http.ResponseWriter) {
 	conf := config.GetConfig()
 	client := openai.NewClient(conf.OpenAIAPIKey)
 	ctx := context.Background()
 
 	req := openai.ChatCompletionRequest{
-		Model: modelName,
+		Model: m.Name,
 		MaxTokens: 0,
 		Messages: []openai.ChatCompletionMessage{
 			{

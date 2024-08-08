@@ -39,9 +39,9 @@
 
 <div class="mb-3 position-relative">
   <div class="d-flex align-items-center position-absolute end-0">
-    <div id="copied" class="d-none"><small>Copied!</small></div>
-    <button class="btn btn-link btn-sm" onclick="copyToClipboard()" title="Copy to clipboard">
+    <button class="btn btn-outline-primary btn-sm" onclick="copyToClipboard()" title="Copy to clipboard">
       <svg id="iconCopy" class="bi" width="16" height="16"><use xlink:href="#copy"/></svg>
+      <span id="copyButtonLabel">Copy</span>
     </button>
   </div>
   
@@ -79,7 +79,7 @@
   const submitTitle = document.querySelector('#submitButton .title');
   const submitLoading = document.querySelector('#submitButton .loading');
   const errorMessage = document.getElementById('errorMessage');
-  const copied = document.getElementById('copied');
+  const copyButtonLabel = document.getElementById('copyButtonLabel');
   let autoScroll = true;
 
   showError('');
@@ -261,11 +261,9 @@
 
   function copyToClipboard() {
     navigator.clipboard.writeText(result.value);
-    copied.classList.remove('d-none');
-    copied.classList.add('d-inline');
+    copyButtonLabel.innerHTML = 'Copied';
     setTimeout(() => {
-      copied.classList.remove('d-inline');
-      copied.classList.add('d-none');
+      copyButtonLabel.innerHTML = 'Copy';
     }, 1500);
   }
 </script>

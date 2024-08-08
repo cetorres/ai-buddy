@@ -17,19 +17,19 @@ func NewModel(provider int, modelName string) *Model {
 func (m Model) SendPromptToModel(prompt string, w http.ResponseWriter) {
 	// Google Gemini
 	if m.Provider == MODEL_PROVIDER_GOOGLE {
-		CreateGoogleMessageStream(m.Name, prompt, w)
+		m.CreateGoogleMessageStream(prompt, w)
 
 	// OpenAI ChatGPT
 	} else if m.Provider == MODEL_PROVIDER_OPENAI {
-		CreateOpenAIChatStream(m.Name, prompt, w)
-
-	// Ollama local server
-	} else if m.Provider == MODEL_PROVIDER_OLLAMA {
-		CreateOllamaGenerateStream(m.Name, prompt, w)
+		m.CreateOpenAIChatStream(prompt, w)
 
 	// Anthropic Claude
 	} else if m.Provider == MODEL_PROVIDER_CLAUDE {
-		CreateClaudeChatCompletion(m.Name, prompt, w)
+		m.CreateClaudeMessageStream(prompt, w)
+
+	// Ollama local server
+	} else if m.Provider == MODEL_PROVIDER_OLLAMA {
+		m.CreateOllamaGenerateStream(prompt, w)
 	}
 }
 

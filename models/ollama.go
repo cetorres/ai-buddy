@@ -12,7 +12,7 @@ import (
 	"github.com/ollama/ollama/envconfig"
 )
 
-func CreateOllamaGenerateStream(modelName string, prompt string, w http.ResponseWriter) {
+func (m Model) CreateOllamaGenerateStream(prompt string, w http.ResponseWriter) {
 	client, err := api.ClientFromEnvironment()
 	if err != nil {
 		if w != nil {
@@ -26,7 +26,7 @@ func CreateOllamaGenerateStream(modelName string, prompt string, w http.Response
 	}
 
 	req := &api.GenerateRequest{
-		Model:  modelName,
+		Model:  m.Name,
 		Prompt: prompt,
 	}
 
