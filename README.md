@@ -1,6 +1,6 @@
 # ai-buddy
 
-A terminal command in Go that is an AI tool to help solving problems using prompt engineering from a set of crowdsourced AI prompts.
+A command-line interface (CLI) made with Go that is an AI tool to help solving problems using prompt engineering from a set of crowdsourced AI prompts.
 
 It's heavily inspired by [Daniel Miessler](https://github.com/danielmiessler)'s tool [Fabric](https://github.com/danielmiessler/fabric). I created this as a simplified Go version, that's compiled, and probably a bit faster.
 
