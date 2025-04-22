@@ -16,8 +16,8 @@ func (m Model) CreateClaudeMessageStream(prompt string, w http.ResponseWriter) {
 	conf := config.GetConfig()
 
 	client := anthropic.NewClient(conf.ClaudeAPIKey)
-	
-	resp, err := client.CreateMessagesStream(context.Background(),  anthropic.MessagesStreamRequest{
+
+	resp, err := client.CreateMessagesStream(context.Background(), anthropic.MessagesStreamRequest{
 		MessagesRequest: anthropic.MessagesRequest{
 			Model: m.Name,
 			Messages: []anthropic.Message{
