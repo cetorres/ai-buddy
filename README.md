@@ -61,7 +61,9 @@ Get your free API key at <https://platform.openai.com/api-keys>.
 
 ### Ollama
 
-To use [Ollama](https://ollama.com), please download the Ollama app, install it and download an AI model. Follow the instructions on the website.
+[![Ollama](https://img.shields.io/badge/Ollama-fff?logo=ollama&logoColor=000)](https://ollama.com)
+
+To use Ollama, please download the Ollama app, install it and download an AI model. Follow the instructions on the website.
 
 It runs locally on your machine and can use free and open source models like `llama3` or `gemma2`. A list of all available models can be accessed [here](https://ollama.com/library).
 
