@@ -1,5 +1,7 @@
 # ai-buddy
 
+[![Github all releases](https://img.shields.io/github/downloads/cetorres/ai-buddy/total.svg)](https://github.com/cetorres/ai-buddy/releases/)
+
 A command-line interface (CLI) made with Go that is an AI tool to help solving problems using prompt engineering from a set of crowdsourced AI prompts.
 
 Inspired by the [Fabric](https://github.com/danielmiessler/fabric) tool, I created this as a Go version, with a few new features and being compiled, which makes it faster.
